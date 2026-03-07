@@ -18,12 +18,12 @@ const schema = z.object({
     .optional()
     .or(z.literal("")),
   preferredDate: z.string().min(1, "Please select a preferred date"),
-  timeSlot: z.enum(["early-morning", "morning", "afternoon", "evening"], {
-    required_error: "Please select a time slot",
+  timeSlot: z.enum(["early-morning", "morning", "afternoon", "evening"] as const, {
+    error: "Please select a time slot",
   }),
   goal: z.enum(
-    ["weight-loss", "muscle-gain", "general-fitness", "crossfit", "other"],
-    { required_error: "Please select your primary goal" }
+    ["weight-loss", "muscle-gain", "general-fitness", "crossfit", "other"] as const,
+    { error: "Please select your primary goal" }
   ),
   referral: z.string().optional(),
   _hp: z.literal("").optional(),

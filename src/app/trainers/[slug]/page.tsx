@@ -118,7 +118,7 @@ export default async function TrainerProfilePage({ params }: Props) {
                 <Button
                   variant="whatsapp"
                   href={buildWhatsAppURL({
-                    message: WA_MESSAGES.trainer,
+                    message: WA_MESSAGES.trainer(trainer.name),
                     source: `trainer-${trainer.slug}`,
                   })}
                   external

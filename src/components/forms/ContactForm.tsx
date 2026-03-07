@@ -18,8 +18,8 @@ const schema = z.object({
     .optional()
     .or(z.literal("")),
   enquiryType: z.enum(
-    ["membership", "personal-training", "corporate", "general"],
-    { required_error: "Please select an enquiry type" }
+    ["membership", "personal-training", "corporate", "general"] as const,
+    { error: "Please select an enquiry type" }
   ),
   message: z.string().min(10, "Message must be at least 10 characters"),
   _hp: z.literal("").optional(),
