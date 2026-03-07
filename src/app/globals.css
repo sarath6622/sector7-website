@@ -1,26 +1,169 @@
 @import "tailwindcss";
 
+/* ─── Design Tokens ─────────────────────────────────────────────────────────── */
+@theme {
+  /* Colors */
+  --color-bg-primary:    #0A0A0A;
+  --color-bg-secondary:  #141414;
+  --color-surface:       #1A1A1A;
+  --color-accent:        #FF5500;
+  --color-accent-hover:  #E04A00;
+  --color-white:         #FFFFFF;
+  --color-muted:         #6B6B6B;
+  --color-border:        #2A2A2A;
+  --color-whatsapp:      #25D366;
+
+  /* Fonts */
+  --font-display: var(--font-bebas-neue), 'Arial Narrow', sans-serif;
+  --font-body:    var(--font-dm-sans), 'Helvetica Neue', sans-serif;
+  --font-mono:    var(--font-jetbrains-mono), 'Courier New', monospace;
+
+  /* Spacing overrides */
+  --spacing-section-desktop: 8rem;   /* 128px */
+  --spacing-section-mobile:  5rem;   /* 80px  */
+}
+
+/* ─── Base Styles ────────────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #0A0A0A;
+  color: #FFFFFF;
+  font-family: var(--font-dm-sans), 'Helvetica Neue', sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ─── Typography ─────────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-bebas-neue), 'Arial Narrow', sans-serif;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* ─── Focus Ring ─────────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #FF5500;
+  outline-offset: 2px;
+}
+
+/* ─── Scrollbar (dark theme) ─────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+::-webkit-scrollbar-thumb {
+  background: #2A2A2A;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FF5500;
+}
+
+/* ─── Selection ──────────────────────────────────────────────────────────────── */
+::selection {
+  background-color: #FF5500;
+  color: #FFFFFF;
+}
+
+/* ─── Reduced Motion ─────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Skip to Content (Accessibility) ───────────────────────────────────────── */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  background: #FF5500;
+  color: #FFFFFF;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 4px 4px;
+  transition: top 0.2s;
+}
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* ─── Utility Classes ────────────────────────────────────────────────────────── */
+.container-section {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+  .container-section {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-section {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+
+/* Accent glow effect */
+.accent-glow {
+  box-shadow: 0 0 20px rgba(255, 85, 0, 0.35);
+}
+
+/* Dark image overlay */
+.image-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 10, 0.3) 0%,
+    rgba(10, 10, 10, 0.85) 100%
+  );
+}
+
+/* Card style */
+.card-dark {
+  background-color: #1A1A1A;
+  border: 1px solid #2A2A2A;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Skeleton shimmer animation */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
 }
