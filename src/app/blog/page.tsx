@@ -15,62 +15,6 @@ export const metadata: Metadata = {
     "Training tips, nutrition advice, and transformation stories from SEC7OR Fitness coaches in Kochi.",
 };
 
-export interface BlogPost {
-  title: string;
-  slug: string;
-  category: string;
-  author: string;
-  authorSlug: string;
-  date: string;
-  readTime: string;
-  excerpt: string;
-  gradient: string;
-}
-
-// ── Static fallback ──────────────────────────────────────────────────────────
-// Also imported by /blog/[slug]/page.tsx for slug generation + article lookup.
-export const BLOG_POSTS: BlogPost[] = [
-  {
-    title: "5 Compound Lifts Every Beginner Must Master",
-    slug: "compound-lifts-beginners",
-    category: "Training",
-    author: "Arjun Menon",
-    authorSlug: "arjun-menon",
-    date: "2026-02-28",
-    readTime: "6 min read",
-    excerpt:
-      "If you're new to the gym and overwhelmed by the equipment, start here. These five movements form the foundation of every effective strength programme — and mastering them will get you 80% of your results.",
-    gradient:
-      "radial-gradient(ellipse at 40% 60%, rgba(255,85,0,0.25) 0%, rgba(10,10,10,0.97) 70%)",
-  },
-  {
-    title: "CrossFit vs Traditional Gym: Which Is Right for You?",
-    slug: "crossfit-vs-traditional-gym",
-    category: "CrossFit",
-    author: "Priya Nair",
-    authorSlug: "priya-nair",
-    date: "2026-02-14",
-    readTime: "5 min read",
-    excerpt:
-      "Both work. Both have their place. But they suit very different goals and personalities. Here's how to decide — without the tribal nonsense you'll find in online fitness communities.",
-    gradient:
-      "radial-gradient(ellipse at 60% 40%, rgba(59,130,246,0.22) 0%, rgba(10,10,10,0.97) 70%)",
-  },
-  {
-    title: "Nutrition Fundamentals for Body Transformation",
-    slug: "nutrition-basics-transformation",
-    category: "Nutrition",
-    author: "Rohit Kumar",
-    authorSlug: "rohit-kumar",
-    date: "2026-01-30",
-    readTime: "8 min read",
-    excerpt:
-      "You cannot out-train a bad diet — but you also don't need to eat like a bodybuilder to transform your body. This is the nutrition framework we use with every SEC7OR transformation client.",
-    gradient:
-      "radial-gradient(ellipse at 40% 60%, rgba(34,197,94,0.20) 0%, rgba(10,10,10,0.97) 70%)",
-  },
-];
-
 // ── Sanity data type ─────────────────────────────────────────────────────────
 interface SanityBlogPost {
   _id: string;
@@ -85,62 +29,48 @@ interface SanityBlogPost {
   authorSlug?: string;
 }
 
+interface DisplayPost {
+  key: string;
+  slug: string;
+  title: string;
+  category: string;
+  author: string;
+  authorSlug: string;
+  date: string;
+  readTime: string;
+  excerpt: string;
+  imageUrl?: string;
+}
+
 const CATEGORIES = ["All", "Training", "CrossFit", "Nutrition", "Recovery", "Lifestyle"];
+
+const DEFAULT_GRADIENT = "radial-gradient(ellipse at 40% 60%, rgba(255,85,0,0.25) 0%, rgba(10,10,10,0.97) 70%)";
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default async function BlogPage() {
-  // Try Sanity; fall back to static
-  let sanityPosts: SanityBlogPost[] | null = null;
+  let posts: DisplayPost[] = [];
+
   if (isSanityConfigured) {
     try {
-      sanityPosts = await sanityClient.fetch(ALL_BLOG_POSTS_QUERY);
+      const sanityPosts = await sanityClient.fetch<SanityBlogPost[]>(ALL_BLOG_POSTS_QUERY);
+      if (sanityPosts?.length) {
+        posts = sanityPosts.map((p) => ({
+          key: p._id,
+          slug: p.slug,
+          title: p.title,
+          category: p.category,
+          author: p.authorName ?? "SEC7OR Team",
+          authorSlug: p.authorSlug ?? "",
+          date: p.publishedAt,
+          readTime: p.readTime ? `${p.readTime} min read` : "5 min read",
+          excerpt: p.excerpt,
+          imageUrl: p.featuredImage?.asset
+            ? urlFor(p.featuredImage).width(800).height(500).url()
+            : undefined,
+        }));
+      }
     } catch { /* fall through */ }
   }
-
-  const usingSanity = Boolean(sanityPosts?.length);
-
-  // Build a unified display list
-  interface DisplayPost {
-    key: string;
-    slug: string;
-    title: string;
-    category: string;
-    author: string;
-    authorSlug: string;
-    date: string;
-    readTime: string;
-    excerpt: string;
-    gradient?: string;
-    imageUrl?: string;
-  }
-
-  const posts: DisplayPost[] = usingSanity
-    ? sanityPosts!.map((p) => ({
-        key: p._id,
-        slug: p.slug,
-        title: p.title,
-        category: p.category,
-        author: p.authorName ?? "SEC7OR Team",
-        authorSlug: p.authorSlug ?? "",
-        date: p.publishedAt,
-        readTime: p.readTime ? `${p.readTime} min read` : "5 min read",
-        excerpt: p.excerpt,
-        imageUrl: p.featuredImage?.asset
-          ? urlFor(p.featuredImage).width(800).height(500).url()
-          : undefined,
-      }))
-    : BLOG_POSTS.map((p) => ({
-        key: p.slug,
-        slug: p.slug,
-        title: p.title,
-        category: p.category,
-        author: p.author,
-        authorSlug: p.authorSlug,
-        date: p.date,
-        readTime: p.readTime,
-        excerpt: p.excerpt,
-        gradient: p.gradient,
-      }));
 
   const [featured, ...rest] = posts;
 
@@ -175,11 +105,10 @@ export default async function BlogPage() {
           {CATEGORIES.map((cat, i) => (
             <span
               key={cat}
-              className={`font-body text-xs font-semibold tracking-wider uppercase px-4 py-2 flex-shrink-0 ${
-                i === 0
+              className={`font-body text-xs font-semibold tracking-wider uppercase px-4 py-2 flex-shrink-0 ${i === 0
                   ? "bg-accent text-white"
                   : "border border-border text-muted hover:border-accent hover:text-accent transition-colors cursor-pointer"
-              }`}
+                }`}
             >
               {cat}
             </span>
@@ -197,11 +126,7 @@ export default async function BlogPage() {
             >
               <div
                 className="relative overflow-hidden"
-                style={{
-                  minHeight: "300px",
-                  background: featured.gradient ??
-                    "radial-gradient(ellipse at 40% 60%, rgba(255,85,0,0.25) 0%, rgba(10,10,10,0.97) 70%)",
-                }}
+                style={{ minHeight: "300px", background: featured.imageUrl ? undefined : DEFAULT_GRADIENT }}
               >
                 {featured.imageUrl && (
                   <Image
@@ -249,8 +174,7 @@ export default async function BlogPage() {
                       className="relative overflow-hidden"
                       style={{
                         height: "200px",
-                        background: post.gradient ??
-                          "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.20) 0%, rgba(10,10,10,0.97) 70%)",
+                        background: post.imageUrl ? undefined : DEFAULT_GRADIENT,
                       }}
                     >
                       {post.imageUrl && (

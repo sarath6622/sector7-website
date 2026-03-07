@@ -3,6 +3,10 @@ import { PageHero } from "@/components/ui/PageHero";
 import { CTABanner } from "@/components/home/CTABanner";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { sanityClient, isSanityConfigured } from "@/lib/sanity/client";
+import { SITE_SETTINGS_ABOUT_QUERY } from "@/lib/sanity/queries";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "About Us — SEC7OR Fitness",
@@ -10,69 +14,43 @@ export const metadata: Metadata = {
     "The story of SEC7OR Fitness — Kochi's premier gym. Founded in 2019 with a mission to make world-class fitness coaching accessible across Kerala.",
 };
 
-const TIMELINE = [
-  {
-    year: "2019",
-    title: "Founded",
-    description:
-      "SEC7OR Fitness opens its doors in Kochi with 2000 sqft, 3 trainers, and a clear mission: no-nonsense coaching for real results.",
-  },
-  {
-    year: "2020",
-    title: "CrossFit Box Added",
-    description:
-      "Expanded to include a dedicated CrossFit box and brought on certified CrossFit coaches. First structured group class programmes launched.",
-  },
-  {
-    year: "2021",
-    title: "500 Members",
-    description:
-      "Crossed 500 active members — a milestone that validated the approach of quality coaching over mass-market gym culture.",
-  },
-  {
-    year: "2022",
-    title: "Expanded to 6000 sqft",
-    description:
-      "Major expansion: added the Functional Zone, additional strength platforms, and a dedicated recovery area.",
-  },
-  {
-    year: "2023",
-    title: "1000 Documented Transformations",
-    description:
-      "Our transformation tracker hit 1000 documented results — making SEC7OR the most transformation-focused gym in Kerala.",
-  },
-  {
-    year: "2024",
-    title: "Kerala's Best Gym",
-    description:
-      "Rated Kerala's Best Independent Gym by FitIndia magazine readers. Expanded coaching team to 12 certified professionals.",
-  },
+// ── Types ─────────────────────────────────────────────────────────────────────
+interface TimelineEvent { year: string; title: string; description: string; }
+interface GymValue { title: string; description: string; }
+
+// ── Static fallbacks ──────────────────────────────────────────────────────────
+const STATIC_TIMELINE: TimelineEvent[] = [
+  { year: "2019", title: "Founded", description: "SEC7OR Fitness opens its doors in Kochi with 2000 sqft, 3 trainers, and a clear mission: no-nonsense coaching for real results." },
+  { year: "2020", title: "CrossFit Box Added", description: "Expanded to include a dedicated CrossFit box and brought on certified CrossFit coaches. First structured group class programmes launched." },
+  { year: "2021", title: "500 Members", description: "Crossed 500 active members — a milestone that validated the approach of quality coaching over mass-market gym culture." },
+  { year: "2022", title: "Expanded to 6000 sqft", description: "Major expansion: added the Functional Zone, additional strength platforms, and a dedicated recovery area." },
+  { year: "2023", title: "1000 Documented Transformations", description: "Our transformation tracker hit 1000 documented results — making SEC7OR the most transformation-focused gym in Kerala." },
+  { year: "2024", title: "Kerala's Best Gym", description: "Rated Kerala's Best Independent Gym by FitIndia magazine readers. Expanded coaching team to 12 certified professionals." },
 ];
 
-const VALUES = [
-  {
-    title: "No Shortcuts",
-    description:
-      "We don't sell magic programmes or quick fixes. Every result here was earned through consistency, smart training, and proper nutrition.",
-  },
-  {
-    title: "Evidence-Based",
-    description:
-      "Every training approach we use is backed by exercise science, not trending social media content. Your time is too valuable for bro-science.",
-  },
-  {
-    title: "Community First",
-    description:
-      "A gym is only as good as the people inside it. We've built a culture where members push each other forward and celebrate each other's wins.",
-  },
-  {
-    title: "Accessible Excellence",
-    description:
-      "World-class coaching doesn't have to mean Bangalore or Mumbai prices. We're making it happen right here in Kochi.",
-  },
+const STATIC_VALUES: GymValue[] = [
+  { title: "No Shortcuts", description: "We don't sell magic programmes or quick fixes. Every result here was earned through consistency, smart training, and proper nutrition." },
+  { title: "Evidence-Based", description: "Every training approach we use is backed by exercise science, not trending social media content. Your time is too valuable for bro-science." },
+  { title: "Community First", description: "A gym is only as good as the people inside it. We've built a culture where members push each other forward and celebrate each other's wins." },
+  { title: "Accessible Excellence", description: "World-class coaching doesn't have to mean Bangalore or Mumbai prices. We're making it happen right here in Kochi." },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  // ── Fetch from Sanity ───────────────────────────────────────────────────────
+  let timelineEvents: TimelineEvent[] = STATIC_TIMELINE;
+  let gymValues: GymValue[] = STATIC_VALUES;
+
+  if (isSanityConfigured) {
+    try {
+      const settings = await sanityClient.fetch<{
+        timelineEvents?: TimelineEvent[];
+        gymValues?: GymValue[];
+      } | null>(SITE_SETTINGS_ABOUT_QUERY);
+      if (settings?.timelineEvents?.length) timelineEvents = settings.timelineEvents;
+      if (settings?.gymValues?.length) gymValues = settings.gymValues;
+    } catch { /* fall through */ }
+  }
+
   return (
     <>
       <PageHero
@@ -94,7 +72,6 @@ export default function AboutPage() {
                     "radial-gradient(ellipse at 30% 60%, rgba(255,85,0,0.18) 0%, rgba(10,10,10,0.97) 65%)",
                 }}
               >
-                {/* TODO: Replace with gym interior photo */}
                 <div className="absolute inset-0 flex items-end p-8">
                   <span className="font-display text-5xl text-white/8 uppercase">
                     SEC7OR FITNESS
@@ -141,7 +118,7 @@ export default function AboutPage() {
             align="center"
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {VALUES.map((v, i) => (
+            {gymValues.map((v, i) => (
               <ScrollReveal key={v.title} delay={i * 0.07}>
                 <div className="card-dark p-7 flex flex-col gap-3 h-full">
                   <span className="font-display text-2xl tracking-wide text-accent uppercase">
@@ -165,24 +142,21 @@ export default function AboutPage() {
             heading="The <em>Timeline</em>"
           />
           <div className="flex flex-col gap-0">
-            {TIMELINE.map((event, i) => (
-              <ScrollReveal key={event.year} delay={i * 0.06}>
+            {timelineEvents.map((event, i) => (
+              <ScrollReveal key={`${event.year}-${i}`} delay={i * 0.06}>
                 <div className="grid grid-cols-[80px_1fr] gap-6 pb-10 relative">
-                  {/* Vertical line */}
-                  {i < TIMELINE.length - 1 && (
+                  {i < timelineEvents.length - 1 && (
                     <div
                       aria-hidden="true"
                       className="absolute left-[39px] top-8 bottom-0 w-px bg-border"
                     />
                   )}
-                  {/* Year dot */}
                   <div className="flex flex-col items-center gap-2 pt-1">
                     <div className="w-4 h-4 rounded-full bg-accent flex-shrink-0 ring-4 ring-bg-primary" />
                     <span className="font-mono text-xs font-bold text-accent">
                       {event.year}
                     </span>
                   </div>
-                  {/* Content */}
                   <div className="flex flex-col gap-1.5 pb-2">
                     <h3 className="font-display text-2xl tracking-wide text-white uppercase">
                       {event.title}

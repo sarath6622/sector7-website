@@ -12,6 +12,19 @@ export const SITE_SETTINGS_QUERY = `
   }
 `;
 
+export const SITE_SETTINGS_ABOUT_QUERY = `
+  *[_type == "siteSettings"][0] {
+    timelineEvents,
+    gymValues
+  }
+`;
+
+export const FAQS_QUERY = `
+  *[_type == "siteSettings"][0] {
+    faqs
+  }
+`;
+
 // ─── Trainers ─────────────────────────────────────────────────────────────────
 export const ALL_TRAINERS_QUERY = `
   *[_type == "trainer" && isActive == true] | order(order asc) {

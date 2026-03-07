@@ -63,8 +63,8 @@ export const siteSettings = defineType({
         {
           type: "object",
           fields: [
-            { name: "day",   type: "string", title: "Day(s)",       description: "E.g. Monday – Saturday" },
-            { name: "open",  type: "string", title: "Opening Time", description: "E.g. 5:00 AM"  },
+            { name: "day", type: "string", title: "Day(s)", description: "E.g. Monday – Saturday" },
+            { name: "open", type: "string", title: "Opening Time", description: "E.g. 5:00 AM" },
             { name: "close", type: "string", title: "Closing Time", description: "E.g. 11:00 PM" },
           ],
           preview: {
@@ -79,8 +79,8 @@ export const siteSettings = defineType({
       type: "object",
       fields: [
         { name: "instagram", type: "url", title: "Instagram URL" },
-        { name: "facebook",  type: "url", title: "Facebook URL"  },
-        { name: "youtube",   type: "url", title: "YouTube URL"   },
+        { name: "facebook", type: "url", title: "Facebook URL" },
+        { name: "youtube", type: "url", title: "YouTube URL" },
       ],
     }),
     defineField({
@@ -88,6 +88,55 @@ export const siteSettings = defineType({
       title: "Default OG Image",
       type: "image",
       description: "Fallback social sharing image (1200×630px recommended)",
+    }),
+    defineField({
+      name: "timelineEvents",
+      title: "About Page — Timeline",
+      type: "array",
+      description: "Milestones shown on the About page, displayed in order",
+      of: [
+        {
+          type: "object",
+          fields: [
+            { name: "year", type: "string", title: "Year" },
+            { name: "title", type: "string", title: "Milestone" },
+            { name: "description", type: "text", title: "Description", rows: 3 },
+          ],
+          preview: { select: { title: "year", subtitle: "title" } },
+        },
+      ],
+    }),
+    defineField({
+      name: "gymValues",
+      title: "About Page — Core Values",
+      type: "array",
+      description: "Value cards shown on the About page",
+      of: [
+        {
+          type: "object",
+          fields: [
+            { name: "title", type: "string", title: "Value Title" },
+            { name: "description", type: "text", title: "Description", rows: 3 },
+          ],
+          preview: { select: { title: "title" } },
+        },
+      ],
+    }),
+    defineField({
+      name: "faqs",
+      title: "Pricing Page — FAQs",
+      type: "array",
+      description: "Frequently asked questions shown on the Pricing page",
+      of: [
+        {
+          type: "object",
+          fields: [
+            { name: "question", type: "string", title: "Question" },
+            { name: "answer", type: "text", title: "Answer", rows: 4 },
+          ],
+          preview: { select: { title: "question" } },
+        },
+      ],
     }),
   ],
   preview: {

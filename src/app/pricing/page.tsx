@@ -6,6 +6,10 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
 import { FAQAccordion, type FAQItem } from "@/components/pricing/FAQAccordion";
 import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
+import { sanityClient, isSanityConfigured } from "@/lib/sanity/client";
+import { ALL_PRICING_PLANS_QUERY, FAQS_QUERY } from "@/lib/sanity/queries";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Pricing — SEC7OR Fitness",
@@ -13,6 +17,20 @@ export const metadata: Metadata = {
     "SEC7OR Fitness membership plans starting at ₹1,499/month. Starter, Pro, and Elite options for every fitness goal in Kochi.",
 };
 
+// ── Sanity types ─────────────────────────────────────────────────────────────
+interface SanityPlan {
+  _id: string;
+  name: string;
+  description: string;
+  monthlyPrice: number;
+  features: string[];
+  notIncluded?: string[];
+  badge?: string;
+  isHighlighted: boolean;
+  order: number;
+}
+
+// ── Static fallbacks ──────────────────────────────────────────────────────────
 interface Plan {
   name: string;
   price: number;
@@ -24,7 +42,7 @@ interface Plan {
   badge?: string;
 }
 
-const PLANS: Plan[] = [
+const STATIC_PLANS: Plan[] = [
   {
     name: "Starter",
     price: 1499,
@@ -77,7 +95,7 @@ const PLANS: Plan[] = [
   },
 ];
 
-const FAQS: FAQItem[] = [
+const STATIC_FAQS: FAQItem[] = [
   {
     question: "Is there a joining fee?",
     answer:
@@ -110,7 +128,62 @@ const FAQS: FAQItem[] = [
   },
 ];
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  // ── Fetch from Sanity ───────────────────────────────────────────────────────
+  let sanityPlans: SanityPlan[] | null = null;
+  let sanityFaqs: { question: string; answer: string }[] | null = null;
+
+  if (isSanityConfigured) {
+    try {
+      sanityPlans = await sanityClient.fetch(ALL_PRICING_PLANS_QUERY);
+    } catch { /* fall through */ }
+    try {
+      const result = await sanityClient.fetch<{ faqs?: { question: string; answer: string }[] } | null>(FAQS_QUERY);
+      sanityFaqs = result?.faqs ?? null;
+    } catch { /* fall through */ }
+  }
+
+  // ── Build display data ──────────────────────────────────────────────────────
+  interface DisplayPlan {
+    key: string;
+    name: string;
+    price: number;
+    billing: string;
+    description: string;
+    features: string[];
+    notIncluded?: string[];
+    highlight: boolean;
+    badge?: string;
+  }
+
+  const plans: DisplayPlan[] = sanityPlans?.length
+    ? sanityPlans.map((p) => ({
+      key: p._id,
+      name: p.name,
+      price: p.monthlyPrice,
+      billing: "per month",
+      description: p.description,
+      features: p.features ?? [],
+      notIncluded: p.notIncluded,
+      highlight: p.isHighlighted,
+      badge: p.badge,
+    }))
+    : STATIC_PLANS.map((p) => ({
+      key: p.name,
+      name: p.name,
+      price: p.price,
+      billing: p.billing,
+      description: p.description,
+      features: p.features,
+      notIncluded: p.notIncluded,
+      highlight: p.highlight,
+      badge: p.badge,
+    }));
+
+  const faqs: FAQItem[] = sanityFaqs?.length
+    ? sanityFaqs.map((f) => ({ question: f.question, answer: f.answer }))
+    : STATIC_FAQS;
+
   return (
     <>
       <PageHero
@@ -123,14 +196,13 @@ export default function PricingPage() {
       <section className="py-20 md:py-28 bg-bg-primary">
         <div className="container-section flex flex-col gap-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
-            {PLANS.map((plan) => (
+            {plans.map((plan) => (
               <div
-                key={plan.name}
-                className={`relative flex flex-col gap-6 p-7 border ${
-                  plan.highlight
+                key={plan.key}
+                className={`relative flex flex-col gap-6 p-7 border ${plan.highlight
                     ? "border-accent bg-accent/5"
                     : "border-border bg-surface"
-                }`}
+                  }`}
               >
                 {plan.badge && (
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-white font-body text-xs font-semibold px-3 py-1 tracking-wider uppercase whitespace-nowrap">
@@ -157,10 +229,7 @@ export default function PricingPage() {
                 <ul className="flex flex-col gap-2.5">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 font-body text-sm text-white/80">
-                      <CheckCircle2
-                        size={14}
-                        className="text-accent mt-0.5 flex-shrink-0"
-                      />
+                      <CheckCircle2 size={14} className="text-accent mt-0.5 flex-shrink-0" />
                       {f}
                     </li>
                   ))}
@@ -203,7 +272,7 @@ export default function PricingPage() {
               heading="FAQ"
               align="center"
             />
-            <FAQAccordion items={FAQS} />
+            <FAQAccordion items={faqs} />
           </div>
         </div>
       </section>

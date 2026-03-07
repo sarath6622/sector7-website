@@ -11,8 +11,6 @@ import {
   BLOG_POST_BY_SLUG_QUERY,
   BLOG_SLUGS_QUERY,
 } from "@/lib/sanity/queries";
-import { BLOG_POSTS } from "@/app/blog/page";
-import { TRAINERS } from "@/app/trainers/page";
 
 export const revalidate = 3600;
 
@@ -69,7 +67,7 @@ export async function generateStaticParams() {
       if (data?.length) return data.map(({ slug }) => ({ slug }));
     } catch { /* fall through */ }
   }
-  return BLOG_POSTS.map((p) => ({ slug: p.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -82,9 +80,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       if (p) return { title: `${p.seoTitle ?? p.title} — SEC7OR Fitness Blog`, description: p.seoDescription ?? p.excerpt };
     } catch { /* fall through */ }
   }
-  const post = BLOG_POSTS.find((p) => p.slug === slug);
-  if (!post) return {};
-  return { title: `${post.title} — SEC7OR Fitness Blog`, description: post.excerpt };
+  return {};
 }
 
 interface SanityPost {
@@ -107,28 +103,27 @@ export default async function BlogPostPage({ params }: Props) {
     catch { /* fall through */ }
   }
 
-  const staticPost    = BLOG_POSTS.find((p) => p.slug === slug);
   const staticContent = POST_CONTENT.find((c) => c.slug === slug);
-  const staticAuthor  = TRAINERS.find((t) => t.slug === staticPost?.authorSlug);
 
-  if (!sanityPost && !staticPost) notFound();
+  if (!sanityPost && !staticContent) notFound();
 
-  const title      = sanityPost?.title       ?? staticPost!.title;
-  const category   = sanityPost?.category    ?? staticPost!.category;
-  const excerpt    = sanityPost?.excerpt     ?? staticPost!.excerpt;
-  const date       = sanityPost?.publishedAt ?? staticPost!.date;
-  const readTime   = sanityPost?.readTime ? `${sanityPost.readTime} min read` : staticPost!.readTime;
-  const authorName  = sanityPost?.authorName  ?? staticPost?.author   ?? "SEC7OR Team";
-  const authorSlug  = sanityPost?.authorSlug  ?? staticPost?.authorSlug;
-  const authorTitle = sanityPost?.authorTitle ?? staticAuthor?.title  ?? "";
-  const authorBio   = sanityPost?.authorBio   ?? staticAuthor?.bio    ?? "";
-  const heroGradient = staticPost?.gradient
-    ?? "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.25) 0%, rgba(10,10,10,0.97) 70%)";
+  const title = sanityPost?.title ?? "Article";
+  const category = sanityPost?.category ?? "";
+  const excerpt = sanityPost?.excerpt ?? "";
+  const date = sanityPost?.publishedAt ?? new Date().toISOString();
+  const readTime = sanityPost?.readTime ? `${sanityPost.readTime} min read` : "5 min read";
+  const authorName = sanityPost?.authorName ?? "SEC7OR Team";
+  const authorSlug = sanityPost?.authorSlug;
+  const authorTitle = sanityPost?.authorTitle ?? "";
+  const authorBio = sanityPost?.authorBio ?? "";
+  const heroGradient = "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.25) 0%, rgba(10,10,10,0.97) 70%)";
 
-  const heroImageUrl   = sanityPost?.featuredImage?.asset   ? urlFor(sanityPost.featuredImage).width(1200).height(600).url()  : null;
-  const authorPhotoUrl = sanityPost?.authorPhoto?.asset     ? urlFor(sanityPost.authorPhoto).width(80).height(80).url()       : null;
+  const heroImageUrl = sanityPost?.featuredImage?.asset ? urlFor(sanityPost.featuredImage).width(1200).height(600).url() : null;
+  const authorPhotoUrl = sanityPost?.authorPhoto?.asset ? urlFor(sanityPost.authorPhoto).width(80).height(80).url() : null;
 
-  const staticRelated = BLOG_POSTS.filter((p) => p.slug !== slug).slice(0, 2);
+  // Related posts — Sanity relatedPosts only; empty if not configured
+  type RelatedPost = { _id: string; slug: string; title: string; category: string; publishedAt: string; featuredImage?: { asset?: { _ref: string } } };
+  const related: RelatedPost[] = sanityPost?.relatedPosts ?? [];
 
   return (
     <>
@@ -219,7 +214,7 @@ export default async function BlogPostPage({ params }: Props) {
                 {authorPhotoUrl ? (
                   <Image src={authorPhotoUrl} alt={authorName} fill className="object-cover" sizes="80px" />
                 ) : (
-                  <div className="w-full h-full" style={{ background: staticAuthor?.gradient ?? "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.25) 0%, rgba(20,20,20,0.95) 65%)" }} />
+                  <div className="w-full h-full" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.25) 0%, rgba(20,20,20,0.95) 65%)" }} />
                 )}
               </div>
               <div className="flex flex-col gap-1.5">
@@ -238,37 +233,31 @@ export default async function BlogPostPage({ params }: Props) {
       )}
 
       {/* Related posts */}
-      {(() => {
-        const related = sanityPost?.relatedPosts?.length
-          ? sanityPost.relatedPosts
-          : staticRelated.map((p) => ({ _id: p.slug, slug: p.slug, title: p.title, category: p.category, publishedAt: p.date, featuredImage: undefined as undefined }));
-        if (!related.length) return null;
-        return (
-          <section className="py-16 bg-bg-primary">
-            <div className="container-section flex flex-col gap-8">
-              <h2 className="font-display text-3xl tracking-wide text-white uppercase">More Articles</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {related.map((p) => {
-                  const relImg = p.featuredImage?.asset ? urlFor(p.featuredImage).width(320).height(320).url() : null;
-                  const relGrad = BLOG_POSTS.find((b) => b.slug === p.slug)?.gradient ?? "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.20) 0%, rgba(10,10,10,0.97) 70%)";
-                  return (
-                    <Link key={p._id} href={`/blog/${p.slug}`} className="card-dark overflow-hidden group flex gap-4 p-5">
-                      <div className="w-20 h-20 flex-shrink-0 rounded relative overflow-hidden" style={{ background: relGrad }}>
-                        {relImg && <Image src={relImg} alt={p.title} fill className="object-cover" sizes="80px" />}
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <span className="font-body text-[10px] text-accent tracking-wider uppercase">{p.category}</span>
-                        <span className="font-display text-lg tracking-wide text-white uppercase group-hover:text-accent transition-colors leading-tight">{p.title}</span>
-                        <span className="font-body text-xs text-muted">{formatDate(p.publishedAt)}</span>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
+      {related.length > 0 && (
+        <section className="py-16 bg-bg-primary">
+          <div className="container-section flex flex-col gap-8">
+            <h2 className="font-display text-3xl tracking-wide text-white uppercase">More Articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {related.map((p: RelatedPost) => {
+                const relImg = p.featuredImage?.asset ? urlFor(p.featuredImage).width(320).height(320).url() : null;
+                const relGrad = "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.20) 0%, rgba(10,10,10,0.97) 70%)";
+                return (
+                  <Link key={p._id} href={`/blog/${p.slug}`} className="card-dark overflow-hidden group flex gap-4 p-5">
+                    <div className="w-20 h-20 flex-shrink-0 rounded relative overflow-hidden" style={{ background: relGrad }}>
+                      {relImg && <Image src={relImg} alt={p.title} fill className="object-cover" sizes="80px" />}
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="font-body text-[10px] text-accent tracking-wider uppercase">{p.category}</span>
+                      <span className="font-display text-lg tracking-wide text-white uppercase group-hover:text-accent transition-colors leading-tight">{p.title}</span>
+                      <span className="font-body text-xs text-muted">{formatDate(p.publishedAt)}</span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
-          </section>
-        );
-      })()}
+          </div>
+        </section>
+      )}
     </>
   );
 }

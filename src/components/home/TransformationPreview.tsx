@@ -2,65 +2,41 @@
 
 import { useRef, useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
-interface Transformation {
-  name: string;
-  duration: string;
-  change: string;
+export interface TransformationPreviewItem {
+  _id: string;
+  clientName: string;
   goal: string;
-  gradient: string;
+  durationMonths: number;
+  weightChange?: number;
+  changeLabel?: string;
+  afterImageUrl?: string;
 }
 
-const TRANSFORMATIONS: Transformation[] = [
-  {
-    name: "Rahul M.",
-    duration: "6 Months",
-    change: "−18 kg",
-    goal: "Weight Loss",
-    gradient: "from-orange-950 via-zinc-900 to-zinc-950",
-  },
-  {
-    name: "Priya K.",
-    duration: "4 Months",
-    change: "+8 kg",
-    goal: "Muscle Gain",
-    gradient: "from-blue-950 via-zinc-900 to-zinc-950",
-  },
-  {
-    name: "Arjun V.",
-    duration: "8 Months",
-    change: "−22 kg",
-    goal: "Body Recomp",
-    gradient: "from-emerald-950 via-zinc-900 to-zinc-950",
-  },
-  {
-    name: "Sneha R.",
-    duration: "3 Months",
-    change: "−10 kg",
-    goal: "Weight Loss",
-    gradient: "from-purple-950 via-zinc-900 to-zinc-950",
-  },
-  {
-    name: "Kiran T.",
-    duration: "5 Months",
-    change: "+12 kg",
-    goal: "Muscle Gain",
-    gradient: "from-rose-950 via-zinc-900 to-zinc-950",
-  },
-];
+interface Props {
+  items: TransformationPreviewItem[];
+}
 
 const CARD_WIDTH = 304; // px + 16px gap
 
+// Gradient palette for cards without photos (cycled by index)
+const GRADIENTS = [
+  "from-orange-950 via-zinc-900 to-zinc-950",
+  "from-blue-950 via-zinc-900 to-zinc-950",
+  "from-emerald-950 via-zinc-900 to-zinc-950",
+  "from-purple-950 via-zinc-900 to-zinc-950",
+  "from-rose-950 via-zinc-900 to-zinc-950",
+];
+
 /**
- * TransformationPreview — horizontal scroll carousel of client transformations.
+ * TransformationPreview — horizontal scroll carousel.
  * Client Component for scroll + button interactivity.
- *
- * The image area is a gradient placeholder — replace with BeforeAfterSlider
- * component and Sanity images in Phase 7 (Transformations page).
+ * Data fetched by the homepage server component and passed as props.
  */
-export function TransformationPreview() {
+export function TransformationPreview({ items }: Props) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(true);
@@ -78,6 +54,8 @@ export function TransformationPreview() {
       behavior: "smooth",
     });
   };
+
+  if (!items.length) return null;
 
   return (
     <section className="py-20 md:py-28 bg-bg-secondary overflow-hidden">
@@ -118,44 +96,61 @@ export function TransformationPreview() {
           role="list"
           aria-label="Transformation stories"
         >
-          {TRANSFORMATIONS.map((t) => (
-            <div
-              key={t.name}
-              role="listitem"
-              className="card-dark flex-shrink-0 w-72 snap-start overflow-hidden"
-            >
-              {/* Image placeholder — replace with BeforeAfterSlider + Sanity images */}
-              <div
-                className={`bg-gradient-to-b ${t.gradient} relative flex flex-col items-center justify-center`}
-                style={{ aspectRatio: "3/4" }}
-              >
-                <span className="font-body text-[10px] text-white/20 tracking-[0.35em] uppercase mb-2">
-                  Before / After
-                </span>
-                <span className="font-display text-3xl text-white/8 uppercase">
-                  Photo
-                </span>
-                <span className="absolute top-4 right-4 bg-accent text-white font-body text-xs font-semibold px-2 py-1 tracking-wider uppercase">
-                  {t.goal}
-                </span>
-              </div>
+          {items.map((t, i) => {
+            const gradient = GRADIENTS[i % GRADIENTS.length];
+            const changeLabel =
+              t.changeLabel ??
+              (t.weightChange != null
+                ? t.weightChange > 0
+                  ? `+${t.weightChange} kg`
+                  : `${t.weightChange} kg`
+                : "—");
 
-              {/* Info */}
-              <div className="p-5 flex flex-col gap-2">
-                <div className="flex items-baseline justify-between">
-                  <span className="font-display text-xl tracking-wide text-white uppercase">
-                    {t.name}
-                  </span>
-                  <span className="font-mono text-lg font-bold text-accent">
-                    {t.change}
+            return (
+              <div
+                key={t._id}
+                role="listitem"
+                className="card-dark flex-shrink-0 w-72 snap-start overflow-hidden"
+              >
+                <div
+                  className={`bg-gradient-to-b ${gradient} relative flex flex-col items-center justify-center overflow-hidden`}
+                  style={{ aspectRatio: "3/4" }}
+                >
+                  {t.afterImageUrl ? (
+                    <Image
+                      src={t.afterImageUrl}
+                      alt={`${t.clientName} transformation`}
+                      fill
+                      className="object-cover"
+                      sizes="288px"
+                    />
+                  ) : (
+                    <>
+                      <span className="font-body text-[10px] text-white/20 tracking-[0.35em] uppercase mb-2">
+                        Before / After
+                      </span>
+                      <span className="font-display text-3xl text-white/8 uppercase">Photo</span>
+                    </>
+                  )}
+                  <span className="absolute top-4 right-4 bg-accent text-white font-body text-xs font-semibold px-2 py-1 tracking-wider uppercase z-10">
+                    {t.goal}
                   </span>
                 </div>
-                <span className="font-body text-xs text-muted tracking-wider">
-                  {t.duration}
-                </span>
+
+                <div className="p-5 flex flex-col gap-2">
+                  <div className="flex items-baseline justify-between">
+                    <span className="font-display text-xl tracking-wide text-white uppercase">
+                      {t.clientName}
+                    </span>
+                    <span className="font-mono text-lg font-bold text-accent">{changeLabel}</span>
+                  </div>
+                  <span className="font-body text-xs text-muted tracking-wider">
+                    {t.durationMonths} Month{t.durationMonths !== 1 ? "s" : ""}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* "See all" card */}
           <Link

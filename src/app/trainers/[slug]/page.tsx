@@ -10,7 +10,6 @@ import {
   TRAINER_BY_SLUG_QUERY,
   TRAINER_SLUGS_QUERY,
 } from "@/lib/sanity/queries";
-import { TRAINERS } from "@/app/trainers/page";
 
 export const revalidate = 3600;
 
@@ -19,14 +18,13 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  // Try Sanity first; fall back to hardcoded slugs
   if (isSanityConfigured) {
     try {
       const data = await sanityClient.fetch<{ slug: string }[]>(TRAINER_SLUGS_QUERY);
       if (data?.length) return data.map(({ slug }) => ({ slug }));
     } catch { /* fall through */ }
   }
-  return TRAINERS.map((t) => ({ slug: t.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -34,17 +32,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (isSanityConfigured) {
     try {
-      const t = await sanityClient.fetch<{ name: string; bio: string } | null>(
+      const t = await sanityClient.fetch<{ name: string; bio?: string } | null>(
         TRAINER_BY_SLUG_QUERY,
         { slug }
       );
-      if (t) return { title: `${t.name} — SEC7OR Fitness`, description: (t.bio ?? "").slice(0, 155) };
+      if (t) return {
+        title: `${t.name} — SEC7OR Fitness`,
+        description: (t.bio ?? "").slice(0, 155),
+      };
     } catch { /* fall through */ }
   }
 
-  const fallback = TRAINERS.find((t) => t.slug === slug);
-  if (!fallback) return {};
-  return { title: `${fallback.name} — SEC7OR Fitness`, description: fallback.bio.slice(0, 155) };
+  return {};
 }
 
 interface SanityTrainerFull {
@@ -52,41 +51,37 @@ interface SanityTrainerFull {
   name: string;
   slug: string;
   photo?: { asset?: { _ref: string } };
-  title: string;
-  specializations: string[];
-  certifications: string[];
-  experience: number;
-  bio: string;
+  title?: string;
+  specializations?: string[];
+  certifications?: string[];
+  experience?: number;
+  bio?: string;
 }
 
 export default async function TrainerProfilePage({ params }: Props) {
   const { slug } = await params;
 
-  // ── Try Sanity ───────────────────────────────────────────────────────────────
-  let sanityTrainer: SanityTrainerFull | null = null;
+  let trainer: SanityTrainerFull | null = null;
+
   if (isSanityConfigured) {
     try {
-      sanityTrainer = await sanityClient.fetch(TRAINER_BY_SLUG_QUERY, { slug });
+      trainer = await sanityClient.fetch(TRAINER_BY_SLUG_QUERY, { slug });
     } catch { /* fall through */ }
   }
 
-  // ── Fallback ─────────────────────────────────────────────────────────────────
-  const staticTrainer = TRAINERS.find((t) => t.slug === slug);
-  if (!sanityTrainer && !staticTrainer) notFound();
+  if (!trainer) notFound();
 
-  const photoUrl =
-    sanityTrainer?.photo?.asset
-      ? urlFor(sanityTrainer.photo).width(640).height(800).url()
-      : null;
+  const photoUrl = trainer.photo?.asset
+    ? urlFor(trainer.photo).width(640).height(800).url()
+    : null;
 
-  const name = sanityTrainer?.name ?? staticTrainer?.name ?? "Trainer";
-  const title = sanityTrainer?.title ?? staticTrainer?.title ?? "Coach";
-  const experience = sanityTrainer?.experience ?? staticTrainer?.experience ?? 0;
-  const bio = sanityTrainer?.bio ?? staticTrainer?.bio ?? "";
-  const specializations = sanityTrainer?.specializations ?? staticTrainer?.specializations ?? [];
-  const certifications = sanityTrainer?.certifications ?? staticTrainer?.certifications ?? [];
-  const gradient = staticTrainer?.gradient
-    ?? "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.20) 0%, rgba(20,20,20,0.95) 65%)";
+  const name = trainer.name ?? "Trainer";
+  const title = trainer.title ?? "Coach";
+  const experience = trainer.experience ?? 0;
+  const bio = trainer.bio ?? "";
+  const specializations = trainer.specializations ?? [];
+  const certifications = trainer.certifications ?? [];
+  const gradient = "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.20) 0%, rgba(20,20,20,0.95) 65%)";
 
   return (
     <>
@@ -136,43 +131,49 @@ export default async function TrainerProfilePage({ params }: Props) {
                 <p className="font-body text-base text-accent tracking-wider">{title}</p>
               </div>
 
-              <p className="font-body text-white/65 text-base leading-relaxed">{bio}</p>
+              {bio && (
+                <p className="font-body text-white/65 text-base leading-relaxed">{bio}</p>
+              )}
 
               {/* Specializations */}
-              <div>
-                <h2 className="font-body text-xs font-semibold tracking-[0.25em] uppercase text-muted mb-3">
-                  Specializations
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {specializations.map((s) => (
-                    <span
-                      key={s}
-                      className="font-body text-sm text-white border border-accent/40 bg-accent/5 px-3 py-1"
-                    >
-                      {s}
-                    </span>
-                  ))}
+              {specializations.length > 0 && (
+                <div>
+                  <h2 className="font-body text-xs font-semibold tracking-[0.25em] uppercase text-muted mb-3">
+                    Specializations
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {specializations.map((s) => (
+                      <span
+                        key={s}
+                        className="font-body text-sm text-white border border-accent/40 bg-accent/5 px-3 py-1"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Certifications */}
-              <div>
-                <h2 className="font-body text-xs font-semibold tracking-[0.25em] uppercase text-muted mb-3 flex items-center gap-2">
-                  <Award size={13} className="text-muted" />
-                  Certifications
-                </h2>
-                <ul className="flex flex-col gap-2">
-                  {certifications.map((cert) => (
-                    <li
-                      key={cert}
-                      className="flex items-center gap-2 font-body text-sm text-white/70"
-                    >
-                      <CheckCircle2 size={13} className="text-accent flex-shrink-0" />
-                      {cert}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {certifications.length > 0 && (
+                <div>
+                  <h2 className="font-body text-xs font-semibold tracking-[0.25em] uppercase text-muted mb-3 flex items-center gap-2">
+                    <Award size={13} className="text-muted" />
+                    Certifications
+                  </h2>
+                  <ul className="flex flex-col gap-2">
+                    {certifications.map((cert) => (
+                      <li
+                        key={cert}
+                        className="flex items-center gap-2 font-body text-sm text-white/70"
+                      >
+                        <CheckCircle2 size={13} className="text-accent flex-shrink-0" />
+                        {cert}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* CTAs */}
               <div className="flex flex-wrap gap-3 pt-2">
@@ -195,7 +196,7 @@ export default async function TrainerProfilePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Client transformations — populated once content is added to CMS */}
+      {/* Client transformations placeholder */}
       <section className="py-20 bg-bg-primary border-b border-border">
         <div className="container-section text-center">
           <p className="font-body text-muted text-sm">
