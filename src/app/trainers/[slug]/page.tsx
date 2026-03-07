@@ -9,6 +9,7 @@ import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
 import {
   TRAINER_BY_SLUG_QUERY,
   TRAINER_SLUGS_QUERY,
+  TRANSFORMATIONS_BY_TRAINER_QUERY,
 } from "@/lib/sanity/queries";
 
 export const revalidate = 3600;
@@ -58,6 +59,18 @@ interface SanityTrainerFull {
   bio?: string;
 }
 
+interface SanityTransformation {
+  _id: string;
+  clientName: string;
+  beforeImage?: { asset?: { _ref: string } };
+  afterImage?: { asset?: { _ref: string } };
+  durationMonths: number;
+  weightChange?: number;
+  changeLabel?: string;
+  goal: string;
+  testimonial?: string;
+}
+
 export default async function TrainerProfilePage({ params }: Props) {
   const { slug } = await params;
 
@@ -70,6 +83,17 @@ export default async function TrainerProfilePage({ params }: Props) {
   }
 
   if (!trainer) notFound();
+
+  // Fetch transformations linked to this trainer
+  let transformations: SanityTransformation[] = [];
+  if (isSanityConfigured && trainer._id) {
+    try {
+      transformations = await sanityClient.fetch(
+        TRANSFORMATIONS_BY_TRAINER_QUERY,
+        { trainerId: trainer._id }
+      );
+    } catch { /* fall through */ }
+  }
 
   const photoUrl = trainer.photo?.asset
     ? urlFor(trainer.photo).width(640).height(800).url()
@@ -196,12 +220,97 @@ export default async function TrainerProfilePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Client transformations placeholder */}
+      {/* Client Transformations */}
       <section className="py-20 bg-bg-primary border-b border-border">
-        <div className="container-section text-center">
-          <p className="font-body text-muted text-sm">
-            Client transformations from {name} will appear here once added to the CMS.
-          </p>
+        <div className="container-section flex flex-col gap-10">
+          <div>
+            <span className="font-body text-xs font-semibold tracking-[0.3em] uppercase text-accent block mb-2">
+              Results
+            </span>
+            <h2 className="font-display text-4xl md:text-5xl tracking-wide text-white uppercase">
+              Client Transformations
+            </h2>
+          </div>
+
+          {transformations.length === 0 ? (
+            <p className="font-body text-muted text-sm">
+              Transformations from {name} will appear here once added to the CMS.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {transformations.map((t) => {
+                const afterUrl = t.afterImage?.asset ? urlFor(t.afterImage).width(400).height(530).url() : null;
+                const beforeUrl = t.beforeImage?.asset ? urlFor(t.beforeImage).width(400).height(530).url() : null;
+
+                const changeLabel =
+                  t.changeLabel ??
+                  (t.weightChange != null
+                    ? t.weightChange > 0
+                      ? `+${t.weightChange} kg`
+                      : `${t.weightChange} kg`
+                    : null);
+
+                return (
+                  <div key={t._id} className="card-dark overflow-hidden flex flex-col">
+                    {/* After/Before images */}
+                    <div className="grid grid-cols-2 gap-px">
+                      {["Before", "After"].map((label, idx) => {
+                        const imgUrl = idx === 0 ? beforeUrl : afterUrl;
+                        return (
+                          <div
+                            key={label}
+                            className="relative overflow-hidden"
+                            style={{ aspectRatio: "3/4", background: gradient }}
+                          >
+                            {imgUrl && (
+                              <Image
+                                src={imgUrl}
+                                alt={`${t.clientName} ${label.toLowerCase()}`}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 17vw"
+                              />
+                            )}
+                            <span className="absolute bottom-2 left-2 font-body text-[10px] text-white/60 tracking-wider uppercase bg-black/40 px-1.5 py-0.5">
+                              {label}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Details */}
+                    <div className="p-5 flex flex-col gap-2 flex-1">
+                      <div className="flex items-baseline justify-between">
+                        <span className="font-display text-xl tracking-wide text-white uppercase">
+                          {t.clientName}
+                        </span>
+                        {changeLabel && (
+                          <span className="font-mono text-base font-bold text-accent">
+                            {changeLabel}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="font-body text-xs text-muted tracking-wider">
+                          {t.goal}
+                        </span>
+                        <span className="text-border">·</span>
+                        <span className="font-body text-xs text-muted">
+                          {t.durationMonths} month{t.durationMonths !== 1 ? "s" : ""}
+                        </span>
+                      </div>
+                      {t.testimonial && (
+                        <p className="font-body text-sm text-white/50 leading-relaxed italic mt-1 line-clamp-3">
+                          &ldquo;{t.testimonial}&rdquo;
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
     </>

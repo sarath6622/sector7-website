@@ -94,6 +94,20 @@ export const FEATURED_TRANSFORMATIONS_QUERY = `
   }
 `;
 
+export const TRANSFORMATIONS_BY_TRAINER_QUERY = `
+  *[_type == "transformation" && trainer._ref == $trainerId] | order(date desc) {
+    _id,
+    clientName,
+    beforeImage,
+    afterImage,
+    durationMonths,
+    weightChange,
+    changeLabel,
+    goal,
+    testimonial
+  }
+`;
+
 // ─── Blog Posts ───────────────────────────────────────────────────────────────
 export const ALL_BLOG_POSTS_QUERY = `
   *[_type == "blogPost"] | order(publishedAt desc) {
