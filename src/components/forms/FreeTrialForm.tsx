@@ -45,6 +45,7 @@ const errorCls = "font-body text-xs text-red-400 mt-1";
 export function FreeTrialForm() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -54,11 +55,22 @@ export function FreeTrialForm() {
 
   async function onSubmit(data: FormData) {
     if (data._hp) return; // bot caught by honeypot
+    setServerError(null);
     setSubmitting(true);
     try {
-      // Phase 9: replace with fetch("/api/trial", { method: "POST", body: JSON.stringify(data) })
-      await new Promise((r) => setTimeout(r, 800)); // simulate network
+      const res = await fetch("/api/trial", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        setServerError((json as { message?: string }).message ?? "Something went wrong. Please try again.");
+        return;
+      }
       setSubmitted(true);
+    } catch {
+      setServerError("Network error. Please check your connection and try again.");
     } finally {
       setSubmitting(false);
     }
@@ -239,6 +251,12 @@ export function FreeTrialForm() {
           <option value="other">Other</option>
         </select>
       </div>
+
+      {serverError && (
+        <p className="font-body text-sm text-red-400 bg-red-500/10 border border-red-500/20 px-4 py-3">
+          {serverError}
+        </p>
+      )}
 
       <button
         type="submit"

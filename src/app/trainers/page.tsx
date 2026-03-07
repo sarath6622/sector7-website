@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { PageHero } from "@/components/ui/PageHero";
 import { CTABanner } from "@/components/home/CTABanner";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
+import { ALL_TRAINERS_QUERY } from "@/lib/sanity/queries";
+
+export const revalidate = 3600; // ISR: revalidate every hour
 
 export const metadata: Metadata = {
   title: "Trainers — SEC7OR Fitness",
@@ -21,6 +26,10 @@ export interface Trainer {
   gradient: string;
 }
 
+// ── Static fallback data ─────────────────────────────────────────────────────
+// Used when Sanity is not yet configured or returns no results.
+// Also imported by /trainers/[slug]/page.tsx and /blog/[slug]/page.tsx
+// for their own fallback lookups.
 export const TRAINERS: Trainer[] = [
   {
     name: "Arjun Menon",
@@ -90,7 +99,33 @@ export const TRAINERS: Trainer[] = [
   },
 ];
 
-export default function TrainersPage() {
+// ── Sanity data type ─────────────────────────────────────────────────────────
+interface SanityTrainer {
+  _id: string;
+  name: string;
+  slug: string;
+  photo?: { asset?: { _ref: string } };
+  title: string;
+  specializations: string[];
+  certifications: string[];
+  experience: number;
+  bio: string;
+}
+
+// ── Page ─────────────────────────────────────────────────────────────────────
+export default async function TrainersPage() {
+  // Try to load from Sanity; silently fall back to static data on failure
+  let sanityTrainers: SanityTrainer[] | null = null;
+  if (isSanityConfigured) {
+    try {
+      sanityTrainers = await sanityClient.fetch(ALL_TRAINERS_QUERY);
+    } catch {
+      // Sanity not reachable — use static fallback
+    }
+  }
+
+  const usingSanity = Boolean(sanityTrainers?.length);
+
   return (
     <>
       <PageHero
@@ -102,52 +137,116 @@ export default function TrainersPage() {
       <section className="py-20 md:py-28 bg-bg-primary">
         <div className="container-section">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {TRAINERS.map((trainer, i) => (
-              <ScrollReveal key={trainer.slug} delay={i * 0.06}>
-                <Link
-                  href={`/trainers/${trainer.slug}`}
-                  className="card-dark block group overflow-hidden"
-                >
-                  {/* Photo placeholder */}
-                  <div
-                    className="relative"
-                    style={{ aspectRatio: "3/4", background: trainer.gradient }}
-                  >
-                    <span className="absolute top-4 right-4 font-body text-xs text-white/40 tracking-wider">
-                      {trainer.experience} yrs
-                    </span>
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 bg-accent/0 group-hover:bg-accent/6 transition-colors duration-300"
-                    />
-                  </div>
-
-                  <div className="p-5 flex flex-col gap-2.5">
-                    <div>
-                      <h2 className="font-display text-2xl tracking-wide text-white uppercase leading-none mb-0.5">
-                        {trainer.name}
-                      </h2>
-                      <p className="font-body text-xs text-accent tracking-wider">
-                        {trainer.title}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {trainer.specializations.slice(0, 2).map((s) => (
-                        <span
-                          key={s}
-                          className="font-body text-[11px] text-muted border border-border/70 px-2 py-0.5"
-                        >
-                          {s}
+            {usingSanity
+              ? // ── Sanity data ──────────────────────────────────────────────
+                sanityTrainers!.map((trainer, i) => {
+                  const photoUrl = trainer.photo?.asset
+                    ? urlFor(trainer.photo).width(480).height(640).url()
+                    : null;
+                  return (
+                    <ScrollReveal key={trainer._id} delay={i * 0.06}>
+                      <Link
+                        href={`/trainers/${trainer.slug}`}
+                        className="card-dark block group overflow-hidden"
+                      >
+                        <div className="relative" style={{ aspectRatio: "3/4" }}>
+                          {photoUrl ? (
+                            <Image
+                              src={photoUrl}
+                              alt={trainer.name}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            />
+                          ) : (
+                            <div
+                              className="absolute inset-0"
+                              style={{
+                                background:
+                                  "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.20) 0%, rgba(20,20,20,0.95) 65%)",
+                              }}
+                            />
+                          )}
+                          <span className="absolute top-4 right-4 font-body text-xs text-white/40 tracking-wider z-10">
+                            {trainer.experience} yrs
+                          </span>
+                          <div
+                            aria-hidden="true"
+                            className="absolute inset-0 bg-accent/0 group-hover:bg-accent/6 transition-colors duration-300 z-10"
+                          />
+                        </div>
+                        <div className="p-5 flex flex-col gap-2.5">
+                          <div>
+                            <h2 className="font-display text-2xl tracking-wide text-white uppercase leading-none mb-0.5">
+                              {trainer.name}
+                            </h2>
+                            <p className="font-body text-xs text-accent tracking-wider">
+                              {trainer.title}
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {trainer.specializations.slice(0, 2).map((s) => (
+                              <span
+                                key={s}
+                                className="font-body text-[11px] text-muted border border-border/70 px-2 py-0.5"
+                              >
+                                {s}
+                              </span>
+                            ))}
+                          </div>
+                          <span className="font-body text-xs text-accent/70 group-hover:text-accent transition-colors mt-1">
+                            View Profile →
+                          </span>
+                        </div>
+                      </Link>
+                    </ScrollReveal>
+                  );
+                })
+              : // ── Static fallback ──────────────────────────────────────────
+                TRAINERS.map((trainer, i) => (
+                  <ScrollReveal key={trainer.slug} delay={i * 0.06}>
+                    <Link
+                      href={`/trainers/${trainer.slug}`}
+                      className="card-dark block group overflow-hidden"
+                    >
+                      <div
+                        className="relative"
+                        style={{ aspectRatio: "3/4", background: trainer.gradient }}
+                      >
+                        <span className="absolute top-4 right-4 font-body text-xs text-white/40 tracking-wider">
+                          {trainer.experience} yrs
                         </span>
-                      ))}
-                    </div>
-                    <span className="font-body text-xs text-accent/70 group-hover:text-accent transition-colors mt-1">
-                      View Profile →
-                    </span>
-                  </div>
-                </Link>
-              </ScrollReveal>
-            ))}
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0 bg-accent/0 group-hover:bg-accent/6 transition-colors duration-300"
+                        />
+                      </div>
+                      <div className="p-5 flex flex-col gap-2.5">
+                        <div>
+                          <h2 className="font-display text-2xl tracking-wide text-white uppercase leading-none mb-0.5">
+                            {trainer.name}
+                          </h2>
+                          <p className="font-body text-xs text-accent tracking-wider">
+                            {trainer.title}
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {trainer.specializations.slice(0, 2).map((s) => (
+                            <span
+                              key={s}
+                              className="font-body text-[11px] text-muted border border-border/70 px-2 py-0.5"
+                            >
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                        <span className="font-body text-xs text-accent/70 group-hover:text-accent transition-colors mt-1">
+                          View Profile →
+                        </span>
+                      </div>
+                    </Link>
+                  </ScrollReveal>
+                ))}
           </div>
         </div>
       </section>

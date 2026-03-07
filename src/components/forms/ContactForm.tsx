@@ -40,6 +40,7 @@ const errorCls = "font-body text-xs text-red-400 mt-1";
 export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -49,11 +50,22 @@ export function ContactForm() {
 
   async function onSubmit(data: FormData) {
     if (data._hp) return;
+    setServerError(null);
     setSubmitting(true);
     try {
-      // Phase 9: replace with fetch("/api/contact", { method: "POST", body: JSON.stringify(data) })
-      await new Promise((r) => setTimeout(r, 800));
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        setServerError((json as { message?: string }).message ?? "Something went wrong. Please try again.");
+        return;
+      }
       setSubmitted(true);
+    } catch {
+      setServerError("Network error. Please check your connection and try again.");
     } finally {
       setSubmitting(false);
     }
@@ -181,6 +193,12 @@ export function ContactForm() {
           <span className={errorCls}>{errors.message.message}</span>
         )}
       </div>
+
+      {serverError && (
+        <p className="font-body text-sm text-red-400 bg-red-500/10 border border-red-500/20 px-4 py-3">
+          {serverError}
+        </p>
+      )}
 
       <button
         type="submit"

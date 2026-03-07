@@ -13,8 +13,17 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      // ── Sanity Studio — relaxed CSP (Studio manages its own security) ──────────
       {
-        source: "/(.*)",
+        source: "/studio/(.*)",
+        headers: [
+          { key: "X-Frame-Options",       value: "SAMEORIGIN" },
+          { key: "X-Content-Type-Options", value: "nosniff"   },
+        ],
+      },
+      // ── All other routes ──────────────────────────────────────────────────────
+      {
+        source: "/((?!studio).*)",
         headers: [
           {
             key: "Content-Security-Policy",
