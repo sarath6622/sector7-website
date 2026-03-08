@@ -112,7 +112,7 @@
 }
 ```
 
-**Zones**: Strength Zone, Cardio Section, Functional Training Area, Recovery & Wellness, Locker Rooms, Parking & Access
+**Populated zones (seeded 2026-03-08)**: Strength Training, Cardio Zone, CrossFit Zone, Functional Zone
 
 **Used in**: `/facilities` page, homepage `FacilitiesPreview`
 
@@ -233,7 +233,8 @@ Shared Portable Text definition used by Trainer.bio and BlogPost.body:
 | `ALL_BLOG_POSTS_QUERY` | All posts, newest first |
 | `BLOG_POST_BY_SLUG_QUERY` | Single post with author + relatedPosts |
 | `BLOG_SLUGS_QUERY` | All post slugs |
-| `ALL_TRANSFORMATIONS_QUERY` | All transformations |
-| `FEATURED_TRANSFORMATIONS_QUERY` | Transformations where `featured == true` |
+| `ALL_TRANSFORMATIONS_QUERY` | All transformations ordered by date |
+| `FEATURED_TRANSFORMATIONS_QUERY` | Transformations where `isFeatured == true` |
+| `TRANSFORMATIONS_BY_TRAINER_QUERY` | Transformations linked to a specific trainer (`$trainerId`) |
 | `ALL_FACILITIES_QUERY` | All facilities ordered by `order` |
 | `ALL_PRICING_PLANS_QUERY` | All pricing plans ordered by `order` |

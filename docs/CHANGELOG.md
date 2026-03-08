@@ -136,3 +136,41 @@
 
 ### Git
 - Commit `ac5af7f` pushed to `origin/main`
+
+---
+
+## [2026-03-08] — Fix: Trainer Profile Transformations
+
+### Fixed
+- `src/app/trainers/[slug]/page.tsx` — the transformations section was a hardcoded placeholder; it never queried Sanity. Replaced with a real fetch + before/after card grid.
+
+### Added
+- `TRANSFORMATIONS_BY_TRAINER_QUERY` in `src/lib/sanity/queries.ts` — fetches all transformations where `trainer._ref == $trainerId`
+- Trainer profile page now renders before/after photo pairs, goal badge, weight change, duration, and testimonial quote for each linked client
+
+### Files touched
+- `src/app/trainers/[slug]/page.tsx`
+- `src/lib/sanity/queries.ts`
+
+### Build verification
+- `npm run build` ✅ — 19 pages, exit code 0
+
+### Git
+- Commit `61ab89f` pushed to `origin/main`
+
+---
+
+## [2026-03-08] — Data: Facility Zones Seeded into Sanity
+
+### Added
+- Sanity documents created for all 4 facility zones:
+  - `facility-strength-training` — Strength Training (order 1)
+  - `facility-cardio-zone` — Cardio Zone (order 2)
+  - `facility-crossfit-zone` — CrossFit Zone (order 3, was pre-existing from Studio)
+  - `facility-functional-zone` — Functional Zone (order 4)
+- All zones seeded with description, equipment list, and display order matching the previous static data
+- `/facilities` page now fully Sanity-driven — static `STATIC_ZONES` fallback is no longer triggered
+
+### Notes
+- Seed script was run from project root (`seed-facilities.mjs`) then deleted (contained API token)
+- Future zone updates: use Sanity Studio → Facility Zones
