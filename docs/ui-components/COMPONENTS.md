@@ -1,12 +1,31 @@
 # UI Components — Sector 7 Gym Website
 
 > All reusable components documented here. Update this file whenever a component is added, modified, or removed.
-> Last updated: 2026-03-07 (Phase 7 complete)
+> Last updated: 2026-03-09 (Phase 10 complete)
 > Status: ⏳ = planned, ✅ = built
 
 ---
 
 ## Layout Components (`src/components/layout/`)
+
+### Analytics ✅ — Added Phase 10
+**File**: `src/components/layout/Analytics.tsx`
+
+Two named exports, both rendered at the bottom of `<body>` in the root layout:
+
+#### `GoogleAnalytics`
+- Loads the GA4 gtag script via `next/script strategy="afterInteractive"`
+- Initialises `gtag('config', GA_ID)` with `page_path`
+- **Requires**: `NEXT_PUBLIC_GA_MEASUREMENT_ID` env var — renders nothing if unset
+- Do not call `gtag()` directly — use `trackEvent()` from `src/lib/analytics.ts`
+
+#### `MicrosoftClarity`
+- Injects the Clarity tracking snippet via `next/script strategy="afterInteractive"`
+- **Requires**: `NEXT_PUBLIC_CLARITY_PROJECT_ID` env var — renders nothing if unset
+
+Both components are pure server components (no `"use client"` needed — `next/script` handles it).
+
+---
 
 ### Navbar ✅
 - Sticky, scroll-aware (adds backdrop blur on scroll)

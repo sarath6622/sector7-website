@@ -1,6 +1,6 @@
 # Deployment Guide — Sector 7 Website
 
-> Last updated: 2026-03-07
+> Last updated: 2026-03-09
 > Deployment target: Vercel
 
 ---
@@ -18,7 +18,7 @@
 - [ ] Favicon added to `public/favicon.ico` + `public/apple-touch-icon.png`
 - [ ] OG image (1200×630px) added to `public/images/og-image.jpg`
 - [ ] Robots.txt correct at `public/robots.txt`
-- [ ] Sitemap generated: `npx next-sitemap`
+- [x] Sitemap auto-generated on every build via `npm run build` (postbuild: next-sitemap) — output: `public/sitemap.xml`
 
 ### Forms & API
 - [ ] Contact form submits correctly and gym receives email
@@ -27,15 +27,27 @@
 - [ ] WhatsApp links open correctly on mobile + desktop
 
 ### SEO
-- [ ] Every page has unique `<title>` and `<meta description>`
-- [ ] All JSON-LD schemas valid (test at schema.org validator)
+> Phase 10 complete — all items below are implemented in code. Final validation needed after real domain + content.
+- [x] Every page exports `metadata` via `generateMetadata()` with unique title + description
+- [x] All pages have canonical URL, `og:*`, and `twitter:card` tags
+- [x] `LocalBusiness` JSON-LD on every page (root layout)
+- [x] `WebSite` + `SearchAction` JSON-LD on homepage
+- [x] `Person` JSON-LD on `/trainers/[slug]`
+- [x] `Article` JSON-LD on `/blog/[slug]`
+- [x] `FAQPage` + `Product`/`Offer` JSON-LD on `/pricing`
+- [ ] Validate all JSON-LD at [schema.org validator](https://validator.schema.org/) after go-live
 - [ ] Sitemap submitted to Google Search Console
 - [ ] robots.txt accessible at `/robots.txt`
 
 ### Analytics
-- [ ] GA4 events firing (use GA4 DebugView)
-- [ ] Microsoft Clarity tracking ID installed
-- [ ] `whatsapp_click` event tracked with correct `source` values
+> Phase 10 complete — scripts are wired. Just add env vars to activate.
+- [x] `GoogleAnalytics` component wired in layout (activate: set `NEXT_PUBLIC_GA_MEASUREMENT_ID`)
+- [x] `MicrosoftClarity` component wired in layout (activate: set `NEXT_PUBLIC_CLARITY_PROJECT_ID`)
+- [x] `whatsapp_click` GA4 event tracked with `source` param on all WhatsApp touchpoints
+- [ ] Set `NEXT_PUBLIC_GA_MEASUREMENT_ID` in Vercel environment variables
+- [ ] Set `NEXT_PUBLIC_CLARITY_PROJECT_ID` in Vercel environment variables
+- [ ] Verify GA4 events firing in GA4 DebugView after deploy
+- [ ] Verify Clarity recording sessions after deploy
 
 ### Performance (Lighthouse, run on production URL)
 - [ ] Performance > 90
