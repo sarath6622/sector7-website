@@ -95,6 +95,27 @@
 
 ---
 
+## [2026-03-09] — Image Gallery + Lightbox (Facilities)
+
+### Added
+- `src/components/facilities/ImageGallery.tsx` — Client Component for zone photo gallery
+  - Single image: hover-to-expand hint, click opens fullscreen lightbox
+  - Multiple images: large main image + horizontal thumbnail strip (active thumbnail highlighted in accent)
+  - Photo count badge (`1 / 4`) on main image
+  - Lightbox: Framer Motion backdrop + panel animations, dark overlay
+  - Lightbox navigation: prev/next arrows, keyboard ArrowLeft/Right, touch swipe (50px threshold), Escape to close
+  - Scroll lock on `document.body` while lightbox open
+  - Rendered via `createPortal` to `document.body`
+  - Graceful no-images fallback: gradient placeholder with zone name
+
+### Changed
+- `src/app/facilities/page.tsx` — Sanity branch now passes all zone images to `<ImageGallery>` (previously showed only first image); removed direct `next/image` usage from page file
+
+### Build verification
+- `npm run build` ✅
+
+---
+
 ## [2026-03-09] — Before/After Slider
 
 ### Added

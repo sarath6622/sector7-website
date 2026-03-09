@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { PageHero } from "@/components/ui/PageHero";
 import { CTABanner } from "@/components/home/CTABanner";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { ImageGallery } from "@/components/facilities/ImageGallery";
 import { CheckCircle2 } from "lucide-react";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_FACILITIES_QUERY } from "@/lib/sanity/queries";
@@ -141,9 +141,12 @@ export default async function FacilitiesPage() {
           ? sanityFacilities!.map((zone, i) => {
             const isEven = i % 2 === 0;
             const gradient = ZONE_GRADIENTS[i % ZONE_GRADIENTS.length];
-            const photoUrl = zone.images?.[0]?.asset
-              ? urlFor(zone.images[0]).width(800).height(600).url()
-              : null;
+            const galleryImages = (zone.images ?? [])
+              .filter((img) => img.asset)
+              .map((img) => ({
+                url: urlFor(img).width(1200).height(900).url(),
+                alt: img.alt ?? zone.name,
+              }));
 
             return (
               <section
@@ -153,28 +156,13 @@ export default async function FacilitiesPage() {
               >
                 <div className="container-section">
                   <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${!isEven ? "lg:grid-flow-dense" : ""}`}>
-                    {/* Image */}
+                    {/* Gallery */}
                     <ScrollReveal direction={isEven ? "left" : "right"} className={!isEven ? "lg:col-start-2" : ""}>
-                      <div
-                        className="relative overflow-hidden border border-border"
-                        style={{ aspectRatio: "4/3", background: photoUrl ? undefined : gradient }}
-                      >
-                        {photoUrl ? (
-                          <Image
-                            src={photoUrl}
-                            alt={zone.images![0].alt ?? zone.name}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 1024px) 100vw, 50vw"
-                          />
-                        ) : (
-                          <div className="absolute inset-0 flex items-end p-8">
-                            <span className="font-display text-4xl text-white/10 uppercase tracking-widest">
-                              {zone.name}
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                      <ImageGallery
+                        images={galleryImages}
+                        gradient={gradient}
+                        zoneName={zone.name}
+                      />
                     </ScrollReveal>
 
                     {/* Content */}

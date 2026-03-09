@@ -239,6 +239,27 @@ interface ModalProps {
 
 ---
 
+## Facilities Components (`src/components/facilities/`)
+
+### ImageGallery ✅
+**File**: `src/components/facilities/ImageGallery.tsx`
+
+**Props**:
+```typescript
+interface ImageGalleryProps {
+  images: { url: string; alt: string }[];
+  gradient?: string;   // CSS gradient string — fallback when no images
+  zoneName?: string;   // used in aria labels
+  sizes?: string;      // next/image sizes attr
+}
+```
+- **No images**: gradient placeholder with zone name watermark
+- **1 image**: hover expand hint, click opens lightbox
+- **2+ images**: main image + horizontal thumbnail strip; active thumbnail highlighted with `border-accent`; photo count badge `1 / N`
+- **Lightbox**: portal to `document.body`, z-index 100, Framer Motion backdrop+panel, prev/next arrows, keyboard ArrowLeft/Right, touch swipe, Escape to close, scroll lock
+
+---
+
 ## Page-specific Components
 
 ### PageHero ✅ (`src/components/ui/PageHero.tsx`)
