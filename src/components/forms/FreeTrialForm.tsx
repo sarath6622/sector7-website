@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
 
 const schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -31,6 +32,21 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
+const TIME_LABELS: Record<string, string> = {
+  "early-morning": "Early Morning (5–7 AM)",
+  "morning":       "Morning (7–11 AM)",
+  "afternoon":     "Afternoon (11 AM–5 PM)",
+  "evening":       "Evening (5–10 PM)",
+};
+
+const GOAL_LABELS: Record<string, string> = {
+  "weight-loss":     "Weight Loss",
+  "muscle-gain":     "Muscle Gain",
+  "general-fitness": "General Fitness",
+  "crossfit":        "CrossFit Training",
+  "other":           "Other",
+};
+
 const inputCls =
   "w-full border border-border bg-surface text-white placeholder:text-muted/60 focus:outline-none focus:border-accent transition-colors font-body text-sm px-4 py-3";
 const labelCls =
@@ -44,8 +60,6 @@ const errorCls = "font-body text-xs text-red-400 mt-1";
  */
 export function FreeTrialForm() {
   const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -53,27 +67,24 @@ export function FreeTrialForm() {
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  async function onSubmit(data: FormData) {
-    if (data._hp) return; // bot caught by honeypot
-    setServerError(null);
-    setSubmitting(true);
-    try {
-      const res = await fetch("/api/trial", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) {
-        const json = await res.json().catch(() => ({}));
-        setServerError((json as { message?: string }).message ?? "Something went wrong. Please try again.");
-        return;
-      }
-      setSubmitted(true);
-    } catch {
-      setServerError("Network error. Please check your connection and try again.");
-    } finally {
-      setSubmitting(false);
-    }
+  function onSubmit(data: FormData) {
+    if (data._hp) return;
+
+    const formattedDate = new Date(data.preferredDate).toLocaleDateString("en-IN", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric",
+    });
+
+    const message = WA_MESSAGES.trialBooking({
+      name:     data.name,
+      phone:    data.phone,
+      date:     formattedDate,
+      timeSlot: TIME_LABELS[data.timeSlot] ?? data.timeSlot,
+      goal:     GOAL_LABELS[data.goal]     ?? data.goal,
+    });
+
+    const waUrl = buildWhatsAppURL({ message, source: "free-trial-form" });
+    window.open(waUrl, "_blank", "noopener,noreferrer");
+    setSubmitted(true);
   }
 
   if (submitted) {
@@ -84,8 +95,7 @@ export function FreeTrialForm() {
           You're Booked!
         </h3>
         <p className="font-body text-muted text-sm max-w-sm leading-relaxed">
-          We'll call you within 2 hours to confirm your free trial session.
-          Can't wait to see you on the gym floor!
+          WhatsApp opened with your booking details. Send the message to confirm your free trial. We'll get back to you shortly!
         </p>
       </div>
     );
@@ -252,18 +262,11 @@ export function FreeTrialForm() {
         </select>
       </div>
 
-      {serverError && (
-        <p className="font-body text-sm text-red-400 bg-red-500/10 border border-red-500/20 px-4 py-3">
-          {serverError}
-        </p>
-      )}
-
       <button
         type="submit"
-        disabled={submitting}
-        className="bg-accent hover:bg-accent-hover text-white font-body font-semibold text-sm px-8 py-4 tracking-widest uppercase transition-colors accent-glow disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+        className="bg-accent hover:bg-accent-hover text-white font-body font-semibold text-sm px-8 py-4 tracking-widest uppercase transition-colors accent-glow mt-2"
       >
-        {submitting ? "Booking…" : "Book My Free Trial"}
+        Book My Free Trial →
       </button>
 
       <p className="font-body text-xs text-muted text-center">

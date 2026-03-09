@@ -9,6 +9,7 @@ import { z } from "zod";
 import { X, CheckCircle } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const STORAGE_KEY = "sector7_popup_shown";
@@ -41,11 +42,9 @@ const TRUST_BULLETS = [
 // ── Component ─────────────────────────────────────────────────────────────────
 export function TrialPopup() {
   const pathname = usePathname();
-  const [mounted,    setMounted]    = useState(false);
-  const [open,       setOpen]       = useState(false);
-  const [submitted,  setSubmitted]  = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
+  const [mounted,   setMounted]   = useState(false);
+  const [open,      setOpen]      = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -107,36 +106,34 @@ export function TrialPopup() {
   }, [open]);
 
   // ── Form submit ─────────────────────────────────────────────────────────────
-  async function onSubmit(data: FormData) {
+  function onSubmit(data: FormData) {
     if (data._hp) return;
-    setServerError(null);
-    setSubmitting(true);
+
+    const GOAL_LABELS: Record<string, string> = {
+      "weight-loss":     "Weight Loss",
+      "muscle-gain":     "Muscle Gain",
+      "general-fitness": "General Fitness",
+      "crossfit":        "CrossFit Training",
+      "other":           "Other",
+    };
+
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const preferredDate = tomorrow.toISOString().split("T")[0];
-    try {
-      const res = await fetch("/api/trial", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          email: "",
-          preferredDate,
-          timeSlot: "evening",
-          referral: "popup",
-        }),
-      });
-      if (!res.ok) {
-        const json = await res.json().catch(() => ({}));
-        setServerError((json as { message?: string }).message ?? "Something went wrong. Please try again.");
-        return;
-      }
-      setSubmitted(true);
-    } catch {
-      setServerError("Network error. Please check your connection.");
-    } finally {
-      setSubmitting(false);
-    }
+    const formattedDate = tomorrow.toLocaleDateString("en-IN", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric",
+    });
+
+    const message = WA_MESSAGES.trialBooking({
+      name:     data.name,
+      phone:    data.phone,
+      date:     formattedDate,
+      timeSlot: "Evening (5–10 PM)",
+      goal:     GOAL_LABELS[data.goal] ?? data.goal,
+    });
+
+    const waUrl = buildWhatsAppURL({ message, source: "trial-popup" });
+    window.open(waUrl, "_blank", "noopener,noreferrer");
+    setSubmitted(true);
   }
 
   if (!mounted) return null;
@@ -239,7 +236,7 @@ export function TrialPopup() {
                         You're In!
                       </h3>
                       <p className="font-body text-sm text-muted leading-relaxed max-w-xs">
-                        We'll call you within 2 hours to schedule your free trial session.
+                        WhatsApp opened with your details. Send the message to confirm your free trial slot!
                       </p>
                       <button
                         onClick={() => setOpen(false)}
@@ -315,16 +312,11 @@ export function TrialPopup() {
                           {errors.goal && <span className={errorCls}>{errors.goal.message}</span>}
                         </div>
 
-                        {serverError && (
-                          <p className="font-body text-xs text-red-400">{serverError}</p>
-                        )}
-
                         <button
                           type="submit"
-                          disabled={submitting}
-                          className="w-full bg-accent hover:bg-accent-hover text-white font-body font-semibold text-sm px-6 py-4 tracking-widest uppercase transition-colors accent-glow disabled:opacity-60 disabled:cursor-not-allowed mt-1"
+                          className="w-full bg-accent hover:bg-accent-hover text-white font-body font-semibold text-sm px-6 py-4 tracking-widest uppercase transition-colors accent-glow mt-1"
                         >
-                          {submitting ? "Booking…" : "Claim Free Trial →"}
+                          Claim Free Trial →
                         </button>
 
                         <button
