@@ -165,6 +165,13 @@ export const ALL_FACILITIES_QUERY = `
   }
 `;
 
+// Lightweight query for homepage bento grid — first image only, ordered
+export const FACILITIES_PREVIEW_QUERY = `
+  *[_type == "facility"] | order(order asc) {
+    "image": images[0]
+  }
+`;
+
 // ─── Pricing Plans ────────────────────────────────────────────────────────────
 export const ALL_PRICING_PLANS_QUERY = `
   *[_type == "pricingPlan"] | order(order asc) {

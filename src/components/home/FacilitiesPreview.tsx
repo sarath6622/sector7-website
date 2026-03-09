@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
@@ -54,13 +55,17 @@ const ZONES: Zone[] = [
   },
 ];
 
+interface FacilitiesPreviewProps {
+  /** Ordered array of image URLs matching ZONES order. null = use gradient. */
+  facilityImages?: (string | null)[];
+}
+
 /**
  * FacilitiesPreview — bento-grid overview of the four training zones.
- * Server Component. Images are gradient placeholders — replace the
- * gradient `div` with `<Image fill src={zone.imageUrl} alt="" />`
- * once Sanity assets are available.
+ * Server Component. Shows real Sanity images when provided via facilityImages prop;
+ * falls back to gradient placeholders otherwise.
  */
-export function FacilitiesPreview() {
+export function FacilitiesPreview({ facilityImages = [] }: FacilitiesPreviewProps) {
   return (
     <section className="py-20 md:py-28 bg-bg-primary">
       <div className="container-section flex flex-col gap-12">
@@ -96,12 +101,33 @@ export function FacilitiesPreview() {
                 className="card-dark block relative overflow-hidden group min-h-[280px]"
                 style={{ minHeight: "280px" }}
               >
-                {/* Gradient background — replace with next/image */}
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0"
-                  style={{ background: zone.gradient }}
-                />
+                {/* Zone image or gradient fallback */}
+                {facilityImages[i] ? (
+                  <>
+                    <Image
+                      src={facilityImages[i]!}
+                      alt={zone.name}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                    {/* Dark overlay so text stays readable over photo */}
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          "linear-gradient(to top, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.3) 60%, rgba(10,10,10,0.1) 100%)",
+                      }}
+                    />
+                  </>
+                ) : (
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0"
+                    style={{ background: zone.gradient }}
+                  />
+                )}
 
                 {/* Content overlay */}
                 <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-7">
