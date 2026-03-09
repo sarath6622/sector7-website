@@ -36,14 +36,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-snap-type: y proximity;
   -webkit-text-size-adjust: 100%;
-}
-
-/* Each <section> is a snap target; scroll-margin-top offsets the fixed navbar */
-section {
-  scroll-snap-align: start;
-  scroll-margin-top: 72px;
 }
 
 body {
