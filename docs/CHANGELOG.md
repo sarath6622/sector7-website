@@ -93,8 +93,30 @@
 4. Add: `FROM_EMAIL=SEC7OR Fitness <noreply@yourdomain.com>`
 5. Verify your sending domain in Resend dashboard
 
-### Next session
-- Phase 10: SEO + Analytics (generateMetadata, JSON-LD, GA4, sitemap, robots.txt)
+---
+
+## [2026-03-09] — Phase 10: SEO + Analytics
+
+### Added
+- `src/components/layout/Analytics.tsx` — `GoogleAnalytics` (GA4 gtag via `next/script afterInteractive`) + `MicrosoftClarity` components. Both are no-ops when env vars unset.
+- `next-sitemap.config.js` — sitemap config with priority overrides; `/api/*` and `/studio/*` excluded. Runs as `postbuild` script.
+
+### Changed
+- `src/app/layout.tsx` — imports Analytics + Clarity; renders `LocalBusiness` JSON-LD (`<script type="application/ld+json">`) on every page; OG image set globally.
+- `src/app/page.tsx` — exports `metadata` via `generateMetadata` helper; renders `WebSite` JSON-LD with `SearchAction` (sitelinks search box).
+- All static pages (`/about`, `/facilities`, `/trainers`, `/transformations`, `/blog`, `/contact`, `/free-trial`, `/pricing`) — switched from plain `metadata` object to `generateMetadata` helper so every page now has canonical URL, `og:title`, `og:description`, `og:image`, and `twitter:card`.
+- `src/app/trainers/[slug]/page.tsx` — `generateMetadata` now sets full OG/Twitter/canonical; renders `Person` JSON-LD (name, jobTitle, worksFor, credentials).
+- `src/app/blog/[slug]/page.tsx` — `generateMetadata` now sets full OG/Twitter/canonical with featured image; renders `Article` JSON-LD (headline, author, publisher, image, datePublished).
+- `src/app/pricing/page.tsx` — renders `FAQPage` JSON-LD for the accordion + one `Product`+`Offer` JSON-LD per membership plan.
+- `package.json` — added `"postbuild": "next-sitemap"` script.
+
+### Build verification
+- `npm run build` ✅ — 16 routes, zero TypeScript errors, sitemap generated (sitemap-0.xml + sitemap.xml index).
+
+### To activate
+1. **GA4**: add `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX` to `.env.local`
+2. **Clarity**: add `NEXT_PUBLIC_CLARITY_PROJECT_ID=XXXXXXXXXX` to `.env.local`
+3. **Sitemap**: already in `public/` after build; submit `https://sector7gym.com/sitemap.xml` to Google Search Console
 
 ---
 

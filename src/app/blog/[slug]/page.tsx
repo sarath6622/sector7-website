@@ -11,6 +11,7 @@ import {
   BLOG_POST_BY_SLUG_QUERY,
   BLOG_SLUGS_QUERY,
 } from "@/lib/sanity/queries";
+import { generateJSONLD } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -72,12 +73,25 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
+
   if (isSanityConfigured) {
     try {
-      const p = await sanityClient.fetch<{ title: string; excerpt: string; seoTitle?: string; seoDescription?: string } | null>(
+      const p = await sanityClient.fetch<{ title: string; excerpt: string; seoTitle?: string; seoDescription?: string; featuredImage?: { asset?: { _ref: string } } } | null>(
         BLOG_POST_BY_SLUG_QUERY, { slug }
       );
-      if (p) return { title: `${p.seoTitle ?? p.title} — SEC7OR Fitness Blog`, description: p.seoDescription ?? p.excerpt };
+      if (p) {
+        const title = `${p.seoTitle ?? p.title} — SEC7OR Fitness Blog`;
+        const description = p.seoDescription ?? p.excerpt;
+        const imgUrl = p.featuredImage?.asset ? urlFor(p.featuredImage).width(1200).height(630).url() : `${SITE_URL}/images/og-image.jpg`;
+        return {
+          title,
+          description,
+          alternates: { canonical: `${SITE_URL}/blog/${slug}` },
+          openGraph: { title, description, url: `${SITE_URL}/blog/${slug}`, type: "article", images: [{ url: imgUrl, width: 1200, height: 630 }] },
+          twitter: { card: "summary_large_image", title, description, images: [imgUrl] },
+        };
+      }
     } catch { /* fall through */ }
   }
   return {};
@@ -125,8 +139,26 @@ export default async function BlogPostPage({ params }: Props) {
   type RelatedPost = { _id: string; slug: string; title: string; category: string; publishedAt: string; featuredImage?: { asset?: { _ref: string } } };
   const related: RelatedPost[] = sanityPost?.relatedPosts ?? [];
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
+
+  const articleLD = generateJSONLD("Article", {
+    headline: title,
+    description: excerpt,
+    datePublished: date,
+    author: { "@type": "Person", name: authorName },
+    publisher: {
+      "@type": "Organization",
+      name: "Sector 7",
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/images/logo.png` },
+    },
+    ...(heroImageUrl ? { image: heroImageUrl } : {}),
+    url: `${SITE_URL}/blog/${slug}`,
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/blog/${slug}` },
+  });
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: articleLD }} />
       {/* Back */}
       <div className="bg-bg-secondary border-b border-border pt-24 pb-0">
         <div className="container-section py-4">

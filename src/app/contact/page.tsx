@@ -3,12 +3,14 @@ import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Youtube } from "lucide
 import { PageHero } from "@/components/ui/PageHero";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
+import { generateMetadata as buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Contact — SEC7OR Fitness",
+export const metadata: Metadata = buildMetadata({
+  title: "Contact SEC7OR Fitness Kochi — Visit or Call",
   description:
     "Get in touch with SEC7OR Fitness Kochi. Call, WhatsApp, or fill in the form — we respond within 24 hours.",
-};
+  path: "/contact",
+});
 
 const HOURS = [
   { day: "Monday – Saturday", hours: "5:00 AM – 11:00 PM" },

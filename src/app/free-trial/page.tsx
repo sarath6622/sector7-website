@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Shield, Clock, Star } from "lucide-react";
 import { FreeTrialForm } from "@/components/forms/FreeTrialForm";
+import { generateMetadata as buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Book a Free Trial — SEC7OR Fitness",
+export const metadata: Metadata = buildMetadata({
+  title: "Book a Free Gym Trial in Kochi — SEC7OR Fitness",
   description:
     "Book your free trial session at SEC7OR Fitness Kochi. No commitment, no credit card. Just show up and train.",
-};
+  path: "/free-trial",
+});
 
 const TRUST_POINTS = [
   { icon: CheckCircle2, text: "No credit card required" },

@@ -11,6 +11,7 @@ import {
   TRAINER_SLUGS_QUERY,
   TRANSFORMATIONS_BY_TRAINER_QUERY,
 } from "@/lib/sanity/queries";
+import { generateJSONLD } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -30,6 +31,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
 
   if (isSanityConfigured) {
     try {
@@ -37,10 +39,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         TRAINER_BY_SLUG_QUERY,
         { slug }
       );
-      if (t) return {
-        title: `${t.name} — SEC7OR Fitness`,
-        description: (t.bio ?? "").slice(0, 155),
-      };
+      if (t) {
+        const desc = (t.bio ?? `Certified fitness coach at SEC7OR Gym Kochi. Specialising in strength and conditioning.`).slice(0, 155);
+        return {
+          title: `${t.name} — Personal Trainer Kochi`,
+          description: desc,
+          alternates: { canonical: `${SITE_URL}/trainers/${slug}` },
+          openGraph: {
+            title: `${t.name} — SEC7OR Fitness`,
+            description: desc,
+            url: `${SITE_URL}/trainers/${slug}`,
+          },
+          twitter: { card: "summary_large_image", title: `${t.name} — SEC7OR Fitness`, description: desc },
+        };
+      }
     } catch { /* fall through */ }
   }
 
@@ -106,9 +118,21 @@ export default async function TrainerProfilePage({ params }: Props) {
   const specializations = trainer.specializations ?? [];
   const certifications = trainer.certifications ?? [];
   const gradient = "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.20) 0%, rgba(20,20,20,0.95) 65%)";
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
+
+  const personLD = generateJSONLD("Person", {
+    name,
+    jobTitle: title,
+    description: bio || `Certified fitness coach at SEC7OR Gym Kochi.`,
+    worksFor: { "@type": "LocalBusiness", name: "Sector 7", url: SITE_URL },
+    url: `${SITE_URL}/trainers/${slug}`,
+    ...(photoUrl ? { image: photoUrl } : {}),
+    ...(certifications.length ? { hasCredential: certifications.map((c) => ({ "@type": "EducationalOccupationalCredential", name: c })) } : {}),
+  });
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: personLD }} />
       {/* Back link */}
       <div className="bg-bg-secondary border-b border-border pt-24 pb-0">
         <div className="container-section py-4">

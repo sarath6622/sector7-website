@@ -8,14 +8,16 @@ import { FAQAccordion, type FAQItem } from "@/components/pricing/FAQAccordion";
 import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
 import { sanityClient, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_PRICING_PLANS_QUERY, FAQS_QUERY } from "@/lib/sanity/queries";
+import { generateMetadata as buildMetadata, generateJSONLD } from "@/lib/seo";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Pricing — SEC7OR Fitness",
+export const metadata: Metadata = buildMetadata({
+  title: "Gym Membership Pricing Kochi — SEC7OR Fitness",
   description:
     "SEC7OR Fitness membership plans starting at ₹1,499/month. Starter, Pro, and Elite options for every fitness goal in Kochi.",
-};
+  path: "/pricing",
+});
 
 // ── Sanity types ─────────────────────────────────────────────────────────────
 interface SanityPlan {
@@ -184,8 +186,37 @@ export default async function PricingPage() {
     ? sanityFaqs.map((f) => ({ question: f.question, answer: f.answer }))
     : STATIC_FAQS;
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
+
+  const faqPageLD = generateJSONLD("FAQPage", {
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  });
+
+  const productsLD = plans.map((plan) =>
+    generateJSONLD("Product", {
+      name: `SEC7OR Fitness ${plan.name} Membership`,
+      description: plan.description,
+      offers: {
+        "@type": "Offer",
+        price: plan.price,
+        priceCurrency: "INR",
+        priceValidUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        url: `${SITE_URL}/pricing`,
+        availability: "https://schema.org/InStock",
+      },
+    })
+  );
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqPageLD }} />
+      {productsLD.map((ld, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: ld }} />
+      ))}
       <PageHero
         label="Membership Plans"
         heading="Choose Your <em>Plan</em>"

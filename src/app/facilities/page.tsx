@@ -6,14 +6,16 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { CheckCircle2 } from "lucide-react";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_FACILITIES_QUERY } from "@/lib/sanity/queries";
+import { generateMetadata as buildMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Facilities — SEC7OR Fitness",
+export const metadata: Metadata = buildMetadata({
+  title: "Gym Facilities — Strength Training Kochi",
   description:
     "Explore SEC7OR Fitness's world-class training zones: Strength, Cardio, CrossFit, and Functional — all under one roof in Kochi.",
-};
+  path: "/facilities",
+});
 
 // ── Sanity type ───────────────────────────────────────────────────────────────
 interface SanityFacility {

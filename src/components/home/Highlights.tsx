@@ -1,10 +1,10 @@
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 
 const STATS = [
-  { value: 50,   suffix: "+", label: "Equipment Pieces" },
-  { value: 12,   suffix: "+", label: "Expert Trainers"  },
-  { value: 3000, suffix: "+", label: "Transformations"  },
-  { value: 5,    suffix: "+", label: "Years of Excellence" },
+  { value: 50, suffix: "+", label: "Equipment Pieces" },
+  { value: 12, suffix: "+", label: "Expert Trainers" },
+  { value: 100, suffix: "+", label: "Transformations" },
+  { value: 2, suffix: "+", label: "Years of Excellence" },
 ];
 
 /**

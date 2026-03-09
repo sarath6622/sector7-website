@@ -5,14 +5,16 @@ import { CTABanner } from "@/components/home/CTABanner";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_TRANSFORMATIONS_QUERY } from "@/lib/sanity/queries";
+import { generateMetadata as buildMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Transformations — SEC7OR Fitness",
+export const metadata: Metadata = buildMetadata({
+  title: "Weight Loss Transformations Kochi — SEC7OR Fitness",
   description:
     "Real member transformations at SEC7OR Fitness Kochi. Documented weight loss, muscle gain, and body recomposition results with certified trainers.",
-};
+  path: "/transformations",
+});
 
 // ── Sanity type ───────────────────────────────────────────────────────────────
 interface SanityTransformation {

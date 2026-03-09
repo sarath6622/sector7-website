@@ -6,14 +6,16 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { formatDate } from "@/lib/utils";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_BLOG_POSTS_QUERY } from "@/lib/sanity/queries";
+import { generateMetadata as buildMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Blog — SEC7OR Fitness",
+export const metadata: Metadata = buildMetadata({
+  title: "Fitness Blog — Workouts, Nutrition & Tips",
   description:
     "Training tips, nutrition advice, and transformation stories from SEC7OR Fitness coaches in Kochi.",
-};
+  path: "/blog",
+});
 
 // ── Sanity data type ─────────────────────────────────────────────────────────
 interface SanityBlogPost {

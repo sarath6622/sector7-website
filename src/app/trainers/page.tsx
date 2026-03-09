@@ -6,14 +6,16 @@ import { CTABanner } from "@/components/home/CTABanner";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_TRAINERS_QUERY } from "@/lib/sanity/queries";
+import { generateMetadata as buildMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Trainers — SEC7OR Fitness",
+export const metadata: Metadata = buildMetadata({
+  title: "Personal Trainers in Kochi — SEC7OR Fitness",
   description:
     "Meet SEC7OR Fitness's team of certified coaches — specialists in strength, CrossFit, nutrition, functional training, boxing, and recovery.",
-};
+  path: "/trainers",
+});
 
 // ── Sanity data type ─────────────────────────────────────────────────────────
 export interface SanityTrainer {

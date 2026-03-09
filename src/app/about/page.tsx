@@ -5,14 +5,16 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { sanityClient, isSanityConfigured } from "@/lib/sanity/client";
 import { SITE_SETTINGS_ABOUT_QUERY } from "@/lib/sanity/queries";
+import { generateMetadata as buildMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "About Us — SEC7OR Fitness",
+export const metadata: Metadata = buildMetadata({
+  title: "About SEC7OR Fitness Kochi",
   description:
     "The story of SEC7OR Fitness — Kochi's premier gym. Founded in 2019 with a mission to make world-class fitness coaching accessible across Kerala.",
-};
+  path: "/about",
+});
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface TimelineEvent { year: string; title: string; description: string; }

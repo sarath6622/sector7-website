@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Hero } from "@/components/home/Hero";
 import { Highlights } from "@/components/home/Highlights";
 import { FacilitiesPreview } from "@/components/home/FacilitiesPreview";
@@ -10,6 +11,16 @@ import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_TRAINERS_QUERY, FEATURED_TRANSFORMATIONS_QUERY } from "@/lib/sanity/queries";
 import type { TrainerPreviewItem } from "@/components/home/TrainersPreview";
 import type { TransformationPreviewItem } from "@/components/home/TransformationPreview";
+import { generateMetadata as buildMetadata, generateJSONLD } from "@/lib/seo";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Sector 7 | Premier Gym in Kochi",
+  description:
+    "Sector 7 is Kochi's premier gym — elite equipment, certified trainers, and thousands of proven transformations. Book your free trial today.",
+  path: "/",
+});
 
 export const revalidate = 3600;
 
@@ -58,8 +69,22 @@ export default async function HomePage() {
     } catch { /* fall through */ }
   }
 
+  const websiteLD = generateJSONLD("WebSite", {
+    name: "Sector 7",
+    url: SITE_URL,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/blog?q={search_term_string}` },
+      "query-input": "required name=search_term_string",
+    },
+  });
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: websiteLD }}
+      />
       <Hero />
       <Highlights />
       <FacilitiesPreview />
