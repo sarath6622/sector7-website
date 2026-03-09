@@ -41,18 +41,8 @@ export function Navbar() {
   const isActive = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(href + "/"));
 
-  if (isFreeTrial) {
-    return (
-      <header className="fixed top-0 left-0 right-0 z-[60] px-4 md:px-8 py-4 flex items-center justify-between">
-        <Link href="/" aria-label="SEC7OR Fitness — home">
-          <Logo variant="compact" className="text-2xl" />
-        </Link>
-        <Link href="/" className="text-sm text-muted hover:text-white transition-colors font-body">
-          ← Back
-        </Link>
-      </header>
-    );
-  }
+  // Free-trial page has its own self-contained header — don't render the global nav
+  if (isFreeTrial) return null;
 
   return (
     <>
