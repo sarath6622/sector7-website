@@ -30,7 +30,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const inputCls =
-  "w-full border border-border bg-bg-primary text-white placeholder:text-muted/50 focus:outline-none focus:border-accent transition-colors font-body text-sm px-4 py-3";
+  "w-full border border-border bg-bg-primary text-white placeholder:text-muted/50 focus:outline-none focus:border-accent transition-colors font-body text-base px-4 py-3";
 const errorCls = "font-body text-xs text-red-400 mt-1";
 
 const TRUST_BULLETS = [
