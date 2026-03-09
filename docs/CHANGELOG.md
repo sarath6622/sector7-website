@@ -95,6 +95,28 @@
 
 ---
 
+## [2026-03-09] — Trial Popup (Scroll / Timer / Exit Intent)
+
+### Added
+- `src/components/layout/TrialPopup.tsx` — global conversion popup (Client Component)
+  - Triggers on first of: scroll depth ≥ 45%, 30-second timer, or mouse exit intent (top of viewport)
+  - Shown max once per session via `sessionStorage` key `sector7_popup_shown`
+  - Skips entirely on `/free-trial` page
+  - Split layout: accent-orange left panel (trust bullets) + 3-field mini form (Name, Phone, Goal)
+  - Submits to `/api/trial` with tomorrow as `preferredDate`, `evening` as `timeSlot`, `popup` as `referral`
+  - Honeypot field for bot protection
+  - Escape key closes; backdrop click closes; scroll locked while open
+  - Framer Motion fade+slide enter/exit animations
+  - Success state shown inline without closing the modal
+
+### Changed
+- `src/app/layout.tsx` — imports and renders `<TrialPopup />` after `<MobileBottomCTA />`
+
+### Build verification
+- `npm run build` ✅
+
+---
+
 ## [2026-03-09] — Image Gallery + Lightbox (Facilities)
 
 ### Added

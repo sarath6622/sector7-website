@@ -6,6 +6,7 @@ import { Footer }            from "@/components/layout/Footer";
 import { WhatsAppFAB }       from "@/components/layout/WhatsAppFAB";
 import { MobileBottomCTA }   from "@/components/layout/MobileBottomCTA";
 import { GoogleAnalytics, MicrosoftClarity } from "@/components/layout/Analytics";
+import { TrialPopup } from "@/components/layout/TrialPopup";
 import { generateJSONLD, getLocalBusinessJSONLD } from "@/lib/seo";
 
 const bebasNeue = Bebas_Neue({
@@ -84,6 +85,7 @@ export default function RootLayout({
         <Footer />
         <WhatsAppFAB />
         <MobileBottomCTA />
+        <TrialPopup />
 
         {/* Analytics — load after interactive, no-op if env vars not set */}
         <GoogleAnalytics />
