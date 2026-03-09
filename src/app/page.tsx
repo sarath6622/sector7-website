@@ -8,7 +8,7 @@ import { GoogleReviews } from "@/components/home/GoogleReviews";
 import { LocationPreview } from "@/components/home/LocationPreview";
 import { CTABanner } from "@/components/home/CTABanner";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
-import { ALL_TRAINERS_QUERY, FEATURED_TRANSFORMATIONS_QUERY, FACILITIES_PREVIEW_QUERY } from "@/lib/sanity/queries";
+import { ALL_TRAINERS_QUERY, FEATURED_TRANSFORMATIONS_QUERY, FACILITIES_PREVIEW_QUERY, HERO_IMAGE_QUERY } from "@/lib/sanity/queries";
 import type { TrainerPreviewItem } from "@/components/home/TrainersPreview";
 import type { TransformationPreviewItem } from "@/components/home/TransformationPreview";
 import { generateMetadata as buildMetadata, generateJSONLD } from "@/lib/seo";
@@ -29,6 +29,19 @@ export const revalidate = 3600;
  * Server Component: fetches Sanity data for preview sections and passes as props.
  */
 export default async function HomePage() {
+  // ── Hero image ──────────────────────────────────────────────────────────────
+  let heroImageUrl: string | null = null;
+  if (isSanityConfigured) {
+    try {
+      const data = await sanityClient.fetch<{ heroImage?: { asset?: { _ref: string } } }>(
+        HERO_IMAGE_QUERY
+      );
+      if (data?.heroImage?.asset) {
+        heroImageUrl = urlFor(data.heroImage).width(1200).height(1120).url();
+      }
+    } catch { /* fall through */ }
+  }
+
   // ── Facility preview images ─────────────────────────────────────────────────
   let facilityImages: (string | null)[] = [];
   if (isSanityConfigured) {
@@ -100,7 +113,7 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: websiteLD }}
       />
-      <Hero />
+      <Hero heroImageUrl={heroImageUrl} />
       <Highlights />
       <FacilitiesPreview facilityImages={facilityImages} />
       <TransformationPreview items={transformationItems} />

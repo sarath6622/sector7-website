@@ -3,7 +3,6 @@ import { Bebas_Neue, DM_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar }            from "@/components/layout/Navbar";
 import { Footer }            from "@/components/layout/Footer";
-import { WhatsAppFAB }       from "@/components/layout/WhatsAppFAB";
 import { MobileBottomCTA }   from "@/components/layout/MobileBottomCTA";
 import { GoogleAnalytics, MicrosoftClarity } from "@/components/layout/Analytics";
 import { TrialPopup } from "@/components/layout/TrialPopup";
@@ -87,7 +86,6 @@ export default function RootLayout({
         <Navbar />
         <main id="main-content">{children}</main>
         <Footer />
-        <WhatsAppFAB />
         <MobileBottomCTA />
         <TrialPopup />
 

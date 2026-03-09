@@ -4,6 +4,12 @@
  */
 
 // ─── Site Settings ────────────────────────────────────────────────────────────
+export const HERO_IMAGE_QUERY = `
+  *[_type == "siteSettings"][0] {
+    heroImage
+  }
+`;
+
 export const SITE_SETTINGS_QUERY = `
   *[_type == "siteSettings"][0] {
     gymName, tagline, phone, email, whatsappNumber,

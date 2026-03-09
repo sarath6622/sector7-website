@@ -84,6 +84,13 @@ export const siteSettings = defineType({
       ],
     }),
     defineField({
+      name: "heroImage",
+      title: "Hero Image",
+      type: "image",
+      description: "Main gym photo shown on the right side of the homepage hero section (recommended: 1200×1120px, portrait orientation)",
+      options: { hotspot: true },
+    }),
+    defineField({
       name: "ogImage",
       title: "Default OG Image",
       type: "image",

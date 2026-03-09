@@ -1,10 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { GrainOverlay } from "@/components/ui/GrainOverlay";
-import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
 
 const EASE: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
 
@@ -35,7 +35,7 @@ const TRUST_STATS = [
  * `<Image fill priority src={heroImageUrl} alt="" />` once gym photos
  * are available from Sanity CMS.
  */
-export function Hero() {
+export function Hero({ heroImageUrl }: { heroImageUrl?: string | null }) {
   const shouldReduce = useReducedMotion();
 
   return (
@@ -61,12 +61,13 @@ export function Hero() {
       />
 
       {/* ── Content ── */}
-      <div className="relative z-10 container-section flex flex-col justify-center min-h-dvh pt-24 pb-24">
+      <div className="relative z-10 container-section grid grid-cols-1 lg:grid-cols-2 items-center min-h-dvh pt-24 pb-24 gap-12">
+        {/* Left: copy */}
         <motion.div
           variants={shouldReduce ? {} : container}
           initial={shouldReduce ? false : "hidden"}
           animate="visible"
-          className="flex flex-col gap-6 max-w-3xl"
+          className="flex flex-col gap-6"
         >
           {/* Label */}
           <motion.span
@@ -80,7 +81,7 @@ export function Hero() {
           <motion.h1
             variants={shouldReduce ? {} : item}
             className="font-display leading-none tracking-wide uppercase text-white"
-            style={{ fontSize: "clamp(3.5rem, 10vw, 8rem)" }}
+            style={{ fontSize: "clamp(3.5rem, 8vw, 7rem)" }}
           >
             Where
             <br />
@@ -102,21 +103,13 @@ export function Hero() {
           {/* CTAs */}
           <motion.div
             variants={shouldReduce ? {} : item}
-            className="flex flex-wrap gap-3 pt-1"
+            className="flex flex-col sm:flex-row sm:flex-wrap gap-3 pt-1"
           >
-            <Button variant="primary" href="/free-trial" size="lg">
+            <Button variant="primary" href="/free-trial" size="lg" className="w-full sm:w-auto">
               Book Free Trial
             </Button>
-            <Button variant="secondary" href="/facilities" size="lg">
+            <Button variant="secondary" href="/facilities" size="lg" className="w-full sm:w-auto">
               Explore Facilities
-            </Button>
-            <Button
-              variant="whatsapp"
-              href={buildWhatsAppURL({ message: WA_MESSAGES.hero, source: "hero" })}
-              external
-              size="lg"
-            >
-              Chat on WhatsApp
             </Button>
           </motion.div>
 
@@ -138,6 +131,69 @@ export function Hero() {
               </span>
             ))}
           </motion.div>
+        </motion.div>
+
+        {/* Right: hero image placeholder (replace src with Sanity image URL) */}
+        <motion.div
+          className="hidden lg:block relative w-full h-[560px]"
+          initial={{ opacity: 0, x: 32 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
+          aria-hidden="true"
+        >
+          {heroImageUrl ? (
+            <>
+              <Image
+                src={heroImageUrl}
+                alt="Sector 7 gym floor"
+                fill
+                priority
+                className="object-cover object-center"
+                sizes="(max-width: 1024px) 0px, 50vw"
+              />
+              {/* Edge fade to blend into the dark background */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `
+                    linear-gradient(to left,  transparent 50%, #0A0A0A 100%),
+                    linear-gradient(to bottom, transparent 60%, #0A0A0A 100%),
+                    linear-gradient(to top,   transparent 85%, #0A0A0A 100%)
+                  `,
+                }}
+              />
+            </>
+          ) : (
+            <>
+              {/* Placeholder — replace by uploading a photo in Sanity CMS → Site Settings → Hero Image */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: "linear-gradient(135deg, #1A1A1A 0%, #111111 40%, #0D0D0D 100%)",
+                  border: "1px solid rgba(255,85,0,0.08)",
+                }}
+              />
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `
+                    linear-gradient(to left,  transparent 60%, #0A0A0A 100%),
+                    linear-gradient(to bottom, transparent 70%, #0A0A0A 100%),
+                    linear-gradient(to top,   transparent 70%, #0A0A0A 100%)
+                  `,
+                }}
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                <span
+                  className="font-body text-[10px] tracking-[0.4em] uppercase"
+                  style={{ color: "rgba(255,85,0,0.25)" }}
+                >
+                  Gym Photo — Add via Sanity CMS
+                </span>
+                <div className="w-12 h-px" style={{ background: "rgba(255,85,0,0.15)" }} />
+              </div>
+            </>
+          )}
         </motion.div>
       </div>
 
