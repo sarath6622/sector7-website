@@ -160,7 +160,7 @@ export function TrialPopup() {
           {/* Panel */}
           <motion.div
             key="popup-panel"
-            className="fixed inset-0 z-[151] flex items-center justify-center p-4"
+            className="fixed inset-0 z-[151] flex items-end sm:items-center justify-center sm:p-4"
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 16 }}
@@ -170,12 +170,31 @@ export function TrialPopup() {
             aria-label="Claim your free trial"
           >
             <div
-              className="relative w-full max-w-2xl bg-bg-secondary border border-border overflow-hidden"
+              className="relative w-full sm:max-w-2xl bg-bg-secondary border border-border overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Close */}
+              {/* ── Mobile header bar (replaces orange panel on small screens) */}
+              <div className="flex md:hidden items-center justify-between bg-accent px-5 py-4">
+                <div>
+                  <p className="font-body text-[10px] font-semibold tracking-[0.3em] uppercase text-white/60 mb-0.5">
+                    Limited Time
+                  </p>
+                  <h2 className="font-display text-2xl text-white uppercase leading-none tracking-wide">
+                    Your First Session Is Free
+                  </h2>
+                </div>
+                <button
+                  className="ml-4 flex-shrink-0 p-2 text-white hover:text-white/70 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+                  onClick={() => setOpen(false)}
+                  aria-label="Close popup"
+                >
+                  <X size={22} />
+                </button>
+              </div>
+
+              {/* ── Desktop close button */}
               <button
-                className="absolute top-3 right-3 z-10 p-1.5 text-muted hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="hidden md:block absolute top-3 right-3 z-10 p-1.5 text-muted hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 onClick={() => setOpen(false)}
                 aria-label="Close popup"
               >
@@ -183,8 +202,8 @@ export function TrialPopup() {
               </button>
 
               <div className="grid grid-cols-1 md:grid-cols-[1fr_1.3fr]">
-                {/* ── Left: brand panel ──────────────────────────────────── */}
-                <div className="bg-accent px-8 py-10 flex flex-col gap-6 justify-between">
+                {/* ── Left: brand panel — desktop only ──────────────────── */}
+                <div className="hidden md:flex bg-accent px-8 py-10 flex-col gap-6 justify-between">
                   <div className="flex flex-col gap-4">
                     <span className="font-body text-[10px] font-semibold tracking-[0.35em] uppercase text-white/60">
                       Limited Time
@@ -212,7 +231,7 @@ export function TrialPopup() {
                 </div>
 
                 {/* ── Right: form ────────────────────────────────────────── */}
-                <div className="px-8 py-10">
+                <div className="px-6 py-6 md:px-8 md:py-10">
                   {submitted ? (
                     <div className="flex flex-col items-center justify-center h-full gap-4 text-center py-8">
                       <CheckCircle size={44} className="text-accent" />
