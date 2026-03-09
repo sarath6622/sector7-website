@@ -3,6 +3,7 @@ import Image from "next/image";
 import { PageHero } from "@/components/ui/PageHero";
 import { CTABanner } from "@/components/home/CTABanner";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { BeforeAfterSlider } from "@/components/transformations/BeforeAfterSlider";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_TRANSFORMATIONS_QUERY } from "@/lib/sanity/queries";
 import { generateMetadata as buildMetadata } from "@/lib/seo";
@@ -124,12 +125,18 @@ export default async function TransformationsPage() {
                 return (
                   <ScrollReveal key={t._id} delay={i * 0.05}>
                     <article className="card-dark overflow-hidden flex flex-col h-full">
-                      {/* After photo (or before/after split) */}
+                      {/* Before/After slider — or single photo — or gradient placeholder */}
                       <div
-                        className={`bg-gradient-to-b ${gradient} relative flex flex-col items-center justify-center overflow-hidden`}
+                        className={`bg-gradient-to-b ${gradient} relative overflow-hidden`}
                         style={{ aspectRatio: "3/4" }}
                       >
-                        {afterUrl ? (
+                        {beforeUrl && afterUrl ? (
+                          <BeforeAfterSlider
+                            beforeUrl={beforeUrl}
+                            afterUrl={afterUrl}
+                            name={t.clientName}
+                          />
+                        ) : afterUrl ? (
                           <Image
                             src={afterUrl}
                             alt={`${t.clientName} — after`}
@@ -146,12 +153,12 @@ export default async function TransformationsPage() {
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           />
                         ) : (
-                          <>
+                          <div className="absolute inset-0 flex flex-col items-center justify-center">
                             <span className="font-body text-[10px] text-white/20 tracking-[0.3em] uppercase mb-2">Before / After</span>
                             <span className="font-display text-2xl text-white/8">Photo</span>
-                          </>
+                          </div>
                         )}
-                        <span className="absolute top-4 right-4 bg-accent text-white font-body text-xs font-semibold px-2 py-1 tracking-wider uppercase z-10">
+                        <span className="absolute top-4 right-4 bg-accent text-white font-body text-xs font-semibold px-2 py-1 tracking-wider uppercase z-30">
                           {t.goal}
                         </span>
                       </div>

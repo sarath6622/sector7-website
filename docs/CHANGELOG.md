@@ -95,6 +95,26 @@
 
 ---
 
+## [2026-03-09] — Before/After Slider
+
+### Added
+- `src/components/transformations/BeforeAfterSlider.tsx` — interactive drag slider (Client Component)
+  - CSS `clip-path: inset(0 X% 0 0)` technique — no canvas
+  - Mouse drag (global mousemove/mouseup listeners)
+  - Touch drag (passive:false touchmove to prevent page scroll while dragging)
+  - Keyboard accessible: ArrowLeft/ArrowRight move slider ±2%
+  - `role="slider"` with `aria-valuemin/max/now` on drag handle
+  - Before/After text labels in each half
+  - Circular white handle with left+right chevron icon
+
+### Changed
+- `src/app/transformations/page.tsx` — Sanity branch now renders `<BeforeAfterSlider>` when both `beforeUrl` and `afterUrl` exist; falls back to single image or gradient placeholder
+
+### Build verification
+- `npm run build` ✅
+
+---
+
 ## [2026-03-09] — Phase 10: SEO + Analytics
 
 ### Added
