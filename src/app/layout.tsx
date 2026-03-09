@@ -7,6 +7,7 @@ import { WhatsAppFAB }       from "@/components/layout/WhatsAppFAB";
 import { MobileBottomCTA }   from "@/components/layout/MobileBottomCTA";
 import { GoogleAnalytics, MicrosoftClarity } from "@/components/layout/Analytics";
 import { TrialPopup } from "@/components/layout/TrialPopup";
+import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { generateJSONLD, getLocalBusinessJSONLD } from "@/lib/seo";
 
 const bebasNeue = Bebas_Neue({
@@ -80,6 +81,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-to-content">
           Skip to main content
         </a>
+        <ScrollProgress />
         <Navbar />
         <main id="main-content">{children}</main>
         <Footer />
