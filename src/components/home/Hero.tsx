@@ -57,7 +57,7 @@ export function Hero() {
       {/* Decorative vertical accent line */}
       <div
         aria-hidden="true"
-        className="absolute left-[50%] top-0 w-px h-32 bg-gradient-to-b from-transparent via-accent/40 to-transparent hidden lg:block"
+        className="absolute left-[50%] top-0 w-px h-32 bg-gradient-to-b from-transparent via-accent/15 to-transparent hidden lg:block"
       />
 
       {/* ── Content ── */}
