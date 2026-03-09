@@ -121,67 +121,96 @@ export function Navbar() {
             initial={{ x: "100%", opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: "100%", opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed inset-0 z-[80] bg-bg-primary flex flex-col lg:hidden"
+            transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
+            className="fixed inset-0 z-[80] bg-bg-primary flex flex-col lg:hidden overflow-hidden"
           >
-            <div className="flex items-center justify-between px-4 h-16 border-b border-border flex-shrink-0">
+            {/* Ambient glow — top right */}
+            <div
+              aria-hidden="true"
+              className="absolute top-0 right-0 w-64 h-64 pointer-events-none"
+              style={{
+                background: "radial-gradient(circle at 100% 0%, rgba(255,85,0,0.08) 0%, transparent 65%)",
+              }}
+            />
+
+            {/* ── Header bar ── */}
+            <div className="relative flex items-center justify-between px-5 h-16 flex-shrink-0">
               <Link href="/" onClick={() => setMenuOpen(false)} aria-label="SEC7OR Fitness — home">
                 <Logo variant="compact" className="text-2xl" />
               </Link>
               <button
                 onClick={() => setMenuOpen(false)}
-                className="text-white p-2 -mr-2 min-h-[48px] min-w-[48px] flex items-center justify-center"
+                className="text-white/60 hover:text-white transition-colors p-2 -mr-2 min-h-[48px] min-w-[48px] flex items-center justify-center"
                 aria-label="Close navigation menu"
               >
-                <X size={24} />
+                <X size={22} />
               </button>
             </div>
 
+            {/* ── Nav links ── */}
             <nav
-              className="flex flex-col flex-1 overflow-y-auto px-4 pt-6 pb-4"
+              className="relative flex flex-col flex-1 justify-center px-5 gap-0"
               aria-label="Mobile navigation"
             >
               {NAV_LINKS.map((link, i) => (
                 <motion.div
                   key={link.href}
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: 24 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.05 + i * 0.04, duration: 0.3 }}
+                  transition={{ delay: 0.06 + i * 0.05, duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="relative"
                 >
+                  {/* Active left bar */}
+                  {isActive(link.href) && (
+                    <motion.div
+                      layoutId="active-bar"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-accent"
+                    />
+                  )}
                   <Link
                     href={link.href}
                     onClick={() => setMenuOpen(false)}
                     className={cn(
-                      "block font-display text-5xl tracking-widest py-3 border-b border-border/50 transition-colors",
-                      isActive(link.href) ? "text-accent" : "text-white hover:text-accent"
+                      "flex items-baseline gap-3 pl-4 py-3 border-b border-white/5 group transition-colors",
+                      isActive(link.href) ? "text-accent" : "text-white/80 hover:text-white"
                     )}
                   >
-                    {link.label}
+                    <span className="font-mono text-[10px] text-white/20 group-hover:text-accent/40 transition-colors tabular-nums w-5">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="font-display text-4xl tracking-wide leading-none">
+                      {link.label}
+                    </span>
                   </Link>
                 </motion.div>
               ))}
             </nav>
 
+            {/* ── Bottom CTAs ── */}
             <motion.div
-              className="px-4 pb-8 flex flex-col gap-3 flex-shrink-0"
-              initial={{ opacity: 0, y: 20 }}
+              className="relative px-5 pb-10 pt-5 flex flex-col gap-3 flex-shrink-0 border-t border-white/5"
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35 }}
+              transition={{ delay: 0.45, duration: 0.3 }}
             >
               <Link
                 href="/free-trial"
                 onClick={() => setMenuOpen(false)}
-                className="block bg-accent hover:bg-accent-hover text-white font-body font-semibold text-center py-4 text-sm tracking-widest transition-colors"
+                className="flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover text-white font-body font-semibold text-sm py-4 tracking-widest uppercase transition-colors accent-glow"
               >
-                BOOK FREE TRIAL
+                Book Free Trial
               </Link>
               <a
                 href={buildWhatsAppURL({ message: WA_MESSAGES.hero, source: "mobile-menu" })}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block border border-border text-white font-body font-medium text-center py-4 text-sm tracking-widest hover:border-whatsapp hover:text-whatsapp transition-colors"
+                className="flex items-center justify-center gap-2 text-white/40 hover:text-white font-body text-xs tracking-[0.2em] uppercase transition-colors py-2"
               >
-                CHAT ON WHATSAPP
+                <span
+                  className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: "#25D366" }}
+                />
+                Chat on WhatsApp
               </a>
             </motion.div>
           </motion.div>

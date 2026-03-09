@@ -259,3 +259,82 @@
 ### Notes
 - Seed script was run from project root (`seed-facilities.mjs`) then deleted (contained API token)
 - Future zone updates: use Sanity Studio → Facility Zones
+
+---
+
+## [2026-03-09] — UX Fixes: TrialPopup Mobile, iOS Zoom, WhatsApp Redirect
+
+### Fixed
+- `src/components/layout/TrialPopup.tsx` — mobile close button was hidden behind the orange panel (absolute-positioned X got covered). Replaced with a compact orange header bar containing the headline + X button inline on mobile (`flex md:hidden`). Desktop layout unchanged.
+- `src/components/forms/FreeTrialForm.tsx`, `ContactForm.tsx`, `TrialPopup.tsx` — all form `inputCls` changed from `text-sm` (14px) to `text-base` (16px) to prevent iOS Safari auto-zoom on input focus.
+
+### Changed
+- `src/components/forms/FreeTrialForm.tsx` — form submission now opens WhatsApp (`wa.me`) with pre-filled booking details instead of calling `/api/trial`. Added `TIME_LABELS` and `GOAL_LABELS` maps.
+- `src/components/layout/TrialPopup.tsx` — form submission now opens WhatsApp with pre-filled booking details. Removed `submitting`/`serverError` state.
+- `src/lib/whatsapp.ts` — added `trialBooking()` message template accepting `{ name, phone, date, timeSlot, goal }`.
+
+### Build verification
+- `npm run build` ✅
+
+---
+
+## [2026-03-09] — Visual Enhancements: Scroll Progress Bar + Cursor Glow
+
+### Added
+- `src/components/layout/ScrollProgress.tsx` — thin 2px accent (`#FF5500`) bar fixed at top of viewport, fills left-to-right as user scrolls. Uses Framer Motion `useScroll` + `useSpring` (stiffness: 100, damping: 30) for physics-based feel.
+- `src/components/layout/CursorGlow.tsx` — soft orange radial gradient (650px, rgba(255,85,0,0.07)) that lazily follows cursor on desktop only (`hidden md:block`). Uses `requestAnimationFrame` + lerp factor 0.1 for smooth trailing. `pointer-events: none` so it never blocks interactions.
+
+### Changed
+- `src/app/layout.tsx` — added `<CursorGlow />` and `<ScrollProgress />` before `<Navbar />`.
+- `src/components/home/Hero.tsx` — decorative vertical accent line opacity reduced from `accent/40` → `accent/15` (was too visible in the navbar area).
+
+### Build verification
+- `npm run build` ✅
+
+---
+
+## [2026-03-09] — Fix: Duplicate Navbar on /free-trial
+
+### Fixed
+- `src/components/layout/Navbar.tsx` — `isFreeTrial` check now returns `null` instead of a minimal header. The `/free-trial` page has its own fixed `top-0 z-50` header, so the global Navbar was rendering a second bar on top of it. Returning `null` removes the overlap entirely.
+
+### Build verification
+- `npm run build` ✅
+
+---
+
+## [2026-03-10] — Hero Layout Overhaul + UI Cleanup
+
+### Added
+- `sanity/schemas/siteSettings.ts` — new `heroImage` field (type: image, hotspot enabled). Description guides upload: "1200×1120px, portrait orientation". Appears in Sanity Studio under **Site Settings → Hero Image** (above Default OG Image).
+- `src/lib/sanity/queries.ts` — added `HERO_IMAGE_QUERY` fetching `heroImage` from siteSettings.
+
+### Changed
+- `src/components/home/Hero.tsx`:
+  - Layout changed from single left-aligned column to **two-column CSS grid on desktop** (`grid-cols-1 lg:grid-cols-2`). Copy on left, image slot on right.
+  - Right column: renders real `<Image>` from Sanity when `heroImageUrl` is provided, with edge-fade gradients (left/bottom/top) to blend into dark background. Falls back to a styled dark placeholder with "Gym Photo — Add via Sanity CMS" label.
+  - CTA buttons: changed container from `flex-wrap` to `flex-col sm:flex-row sm:flex-wrap` so all buttons are full-width on mobile and natural width on sm+.
+  - Removed "Chat on WhatsApp" CTA button from hero (cleaner, two-button layout).
+  - Removed `buildWhatsAppURL` / `WA_MESSAGES` imports (no longer needed in Hero).
+  - Heading `fontSize` adjusted from `clamp(3.5rem, 10vw, 8rem)` → `clamp(3.5rem, 8vw, 7rem)` to prevent overflow in narrower left column.
+  - Added `import Image from "next/image"`.
+  - Accepts `heroImageUrl?: string | null` prop.
+- `src/app/page.tsx` — fetches `heroImageUrl` from Sanity using `HERO_IMAGE_QUERY`, passes to `<Hero heroImageUrl={heroImageUrl} />`.
+- `src/app/layout.tsx` — removed `<WhatsAppFAB />` and its import (floating green button removed from all pages).
+
+### Removed
+- WhatsApp FAB floating button removed from global layout.
+- "Chat on WhatsApp" button removed from hero CTAs.
+- CSS scroll snapping (was already reverted; confirmed clean in `globals.css`).
+
+### Build verification
+- `npm run build` ✅ — 19 routes, zero TypeScript errors, sitemap regenerated.
+
+### Git
+- Commit `7212067` pushed to `origin/main`
+
+### To add hero image
+1. Open Sanity Studio → Site Settings
+2. Scroll to **Hero Image** field (above Default OG Image)
+3. Upload gym photo (portrait, ~1200×1120px recommended)
+4. Publish — image appears live after next ISR revalidation (1h) or on redeploy
