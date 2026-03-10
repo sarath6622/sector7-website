@@ -50,7 +50,7 @@ export function Navbar() {
         className={cn(
           "fixed top-0 left-0 right-0 z-[60] transition-all duration-300",
           scrolled
-            ? "bg-bg-primary/95 backdrop-blur-md border-b border-border"
+            ? "bg-bg-primary/95 backdrop-blur-md"
             : "bg-transparent"
         )}
       >
@@ -124,12 +124,12 @@ export function Navbar() {
             transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
             className="fixed inset-0 z-[80] bg-bg-primary flex flex-col lg:hidden overflow-hidden"
           >
-            {/* Ambient glow — top right */}
+            {/* Ambient glow — top right, visible at 0.14 opacity */}
             <div
               aria-hidden="true"
-              className="absolute top-0 right-0 w-64 h-64 pointer-events-none"
+              className="absolute top-0 right-0 w-80 h-80 pointer-events-none"
               style={{
-                background: "radial-gradient(circle at 100% 0%, rgba(255,85,0,0.08) 0%, transparent 65%)",
+                background: "radial-gradient(circle at 100% 0%, rgba(255,85,0,0.14) 0%, transparent 65%)",
               }}
             />
 
@@ -148,8 +148,9 @@ export function Navbar() {
             </div>
 
             {/* ── Nav links ── */}
+            {/* justify-evenly distributes space uniformly — no top-heavy dead zones */}
             <nav
-              className="relative flex flex-col flex-1 justify-center px-5 gap-0"
+              className="relative flex flex-col flex-1 justify-evenly px-5 py-2"
               aria-label="Mobile navigation"
             >
               {NAV_LINKS.map((link, i) => (
@@ -160,35 +161,46 @@ export function Navbar() {
                   transition={{ delay: 0.06 + i * 0.05, duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
                   className="relative"
                 >
-                  {/* Active left bar */}
+                  {/* Active left bar — 3px rounded pill, always at left-0 */}
                   {isActive(link.href) && (
                     <motion.div
                       layoutId="active-bar"
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-accent"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-accent rounded-full"
                     />
                   )}
+
                   <Link
                     href={link.href}
                     onClick={() => setMenuOpen(false)}
                     className={cn(
-                      "flex items-baseline gap-3 pl-4 py-3 border-b border-white/5 group transition-colors",
-                      isActive(link.href) ? "text-accent" : "text-white/80 hover:text-white"
+                      "flex items-center gap-4 pl-5 py-1.5 group transition-colors",
+                      isActive(link.href) ? "text-accent" : "text-white/75 hover:text-white"
                     )}
                   >
-                    <span className="font-mono text-[10px] text-white/20 group-hover:text-accent/40 transition-colors tabular-nums w-5">
+                    {/* Fixed-width number column — right-aligned for visual consistency */}
+                    <span className="font-mono text-[10px] text-white/25 group-hover:text-accent/50 transition-colors tabular-nums w-6 text-right flex-shrink-0">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <span className="font-display text-4xl tracking-wide leading-none">
+                    {/* Responsive font — clamp prevents TRANSFORMATIONS overflow on small phones */}
+                    <span
+                      className="font-display tracking-wide leading-none"
+                      style={{ fontSize: "clamp(1.75rem, 8.5vw, 2.5rem)" }}
+                    >
                       {link.label}
                     </span>
                   </Link>
+
+                  {/* Separator starts after number column, not at screen edge */}
+                  {i < NAV_LINKS.length - 1 && (
+                    <div className="ml-[3.25rem] h-px bg-white/5" />
+                  )}
                 </motion.div>
               ))}
             </nav>
 
             {/* ── Bottom CTAs ── */}
             <motion.div
-              className="relative px-5 pb-10 pt-5 flex flex-col gap-3 flex-shrink-0 border-t border-white/5"
+              className="relative px-5 pb-10 pt-4 flex flex-col gap-3 flex-shrink-0 border-t border-white/5"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45, duration: 0.3 }}
@@ -196,15 +208,16 @@ export function Navbar() {
               <Link
                 href="/free-trial"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover text-white font-body font-semibold text-sm py-4 tracking-widest uppercase transition-colors accent-glow"
+                className="flex items-center justify-center bg-accent hover:bg-accent-hover text-white font-body font-semibold text-sm py-4 tracking-widest uppercase transition-colors accent-glow"
               >
                 Book Free Trial
               </Link>
+              {/* WhatsApp — text-white/65 meets WCAG AA contrast on dark bg */}
               <a
                 href={buildWhatsAppURL({ message: WA_MESSAGES.hero, source: "mobile-menu" })}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 text-white/40 hover:text-white font-body text-xs tracking-[0.2em] uppercase transition-colors py-2"
+                className="flex items-center justify-center gap-2 text-white/65 hover:text-white font-body text-xs tracking-[0.2em] uppercase transition-colors py-2"
               >
                 <span
                   className="w-1.5 h-1.5 rounded-full flex-shrink-0"
