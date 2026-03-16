@@ -13,13 +13,20 @@ import type { TrainerPreviewItem } from "@/components/home/TrainersPreview";
 import type { TransformationPreviewItem } from "@/components/home/TransformationPreview";
 import { generateMetadata as buildMetadata, generateJSONLD } from "@/lib/seo";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
 
 export const metadata: Metadata = buildMetadata({
   title: "Sector 7 | Premier Gym in Kochi",
   description:
     "Sector 7 is Kochi's premier gym — elite equipment, certified trainers, and thousands of proven transformations. Book your free trial today.",
   path: "/",
+  keywords: [
+    "gym in Kochi", "best gym Kochi", "gym near me Kochi",
+    "fitness center Kochi", "gym Kakkanad", "CrossFit Kochi",
+    "personal trainer Kochi", "weight loss gym Kochi",
+    "strength training Kochi", "gym membership Kochi",
+    "SEC7OR Fitness", "Sector 7 gym", "gym Kerala",
+  ],
 });
 
 export const revalidate = 3600;

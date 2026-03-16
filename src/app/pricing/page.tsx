@@ -8,7 +8,7 @@ import { FAQAccordion, type FAQItem } from "@/components/pricing/FAQAccordion";
 import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
 import { sanityClient, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_PRICING_PLANS_QUERY, FAQS_QUERY } from "@/lib/sanity/queries";
-import { generateMetadata as buildMetadata, generateJSONLD } from "@/lib/seo";
+import { generateMetadata as buildMetadata, generateJSONLD, generateBreadcrumbJSONLD } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -17,6 +17,11 @@ export const metadata: Metadata = buildMetadata({
   description:
     "SEC7OR Fitness membership plans starting at ₹1,499/month. Starter, Pro, and Elite options for every fitness goal in Kochi.",
   path: "/pricing",
+  keywords: [
+    "gym membership Kochi", "gym fees Kochi", "gym charges Kochi",
+    "affordable gym Kochi", "monthly gym membership Kochi",
+    "personal training packages Kochi", "CrossFit membership Kochi",
+  ],
 });
 
 // ── Sanity types ─────────────────────────────────────────────────────────────
@@ -186,7 +191,12 @@ export default async function PricingPage() {
     ? sanityFaqs.map((f) => ({ question: f.question, answer: f.answer }))
     : STATIC_FAQS;
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
+
+  const breadcrumbLD = generateBreadcrumbJSONLD([
+    { name: "Home", url: SITE_URL },
+    { name: "Pricing", url: `${SITE_URL}/pricing` },
+  ]);
 
   const faqPageLD = generateJSONLD("FAQPage", {
     mainEntity: faqs.map((f) => ({
@@ -213,6 +223,7 @@ export default async function PricingPage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbLD }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqPageLD }} />
       {productsLD.map((ld, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: ld }} />

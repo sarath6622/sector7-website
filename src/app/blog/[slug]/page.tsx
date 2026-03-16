@@ -11,7 +11,7 @@ import {
   BLOG_POST_BY_SLUG_QUERY,
   BLOG_SLUGS_QUERY,
 } from "@/lib/sanity/queries";
-import { generateJSONLD } from "@/lib/seo";
+import { generateJSONLD, generateBreadcrumbJSONLD } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -73,7 +73,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
 
   if (isSanityConfigured) {
     try {
@@ -139,7 +139,13 @@ export default async function BlogPostPage({ params }: Props) {
   type RelatedPost = { _id: string; slug: string; title: string; category: string; publishedAt: string; featuredImage?: { asset?: { _ref: string } } };
   const related: RelatedPost[] = sanityPost?.relatedPosts ?? [];
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
+
+  const breadcrumbLD = generateBreadcrumbJSONLD([
+    { name: "Home", url: SITE_URL },
+    { name: "Blog", url: `${SITE_URL}/blog` },
+    { name: title, url: `${SITE_URL}/blog/${slug}` },
+  ]);
 
   const articleLD = generateJSONLD("Article", {
     headline: title,
@@ -158,6 +164,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbLD }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: articleLD }} />
       {/* Back */}
       <div className="bg-bg-secondary border-b border-border pt-24 pb-0">

@@ -6,7 +6,7 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { formatDate } from "@/lib/utils";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_BLOG_POSTS_QUERY } from "@/lib/sanity/queries";
-import { generateMetadata as buildMetadata } from "@/lib/seo";
+import { generateMetadata as buildMetadata, generateBreadcrumbJSONLD } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -76,9 +76,16 @@ export default async function BlogPage() {
 
   const [featured, ...rest] = posts;
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
+  const breadcrumbLD = generateBreadcrumbJSONLD([
+    { name: "Home", url: SITE_URL },
+    { name: "Blog", url: `${SITE_URL}/blog` },
+  ]);
+
   if (!featured) {
     return (
       <>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbLD }} />
         <PageHero
           label="Fitness Insights"
           heading="The <em>Blog</em>"
@@ -95,6 +102,7 @@ export default async function BlogPage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbLD }} />
       <PageHero
         label="Fitness Insights"
         heading="The <em>Blog</em>"

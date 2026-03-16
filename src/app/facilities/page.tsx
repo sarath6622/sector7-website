@@ -6,7 +6,7 @@ import { ImageGallery } from "@/components/facilities/ImageGallery";
 import { CheckCircle2 } from "lucide-react";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_FACILITIES_QUERY } from "@/lib/sanity/queries";
-import { generateMetadata as buildMetadata } from "@/lib/seo";
+import { generateMetadata as buildMetadata, generateBreadcrumbJSONLD } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -15,6 +15,10 @@ export const metadata: Metadata = buildMetadata({
   description:
     "Explore SEC7OR Fitness's world-class training zones: Strength, Cardio, CrossFit, and Functional — all under one roof in Kochi.",
   path: "/facilities",
+  keywords: [
+    "gym facilities Kochi", "CrossFit box Kochi", "strength training gym Kochi",
+    "cardio gym Kochi", "functional training Kochi", "best equipped gym Kochi",
+  ],
 });
 
 // ── Sanity type ───────────────────────────────────────────────────────────────
@@ -127,8 +131,15 @@ export default async function FacilitiesPage() {
 
   const usingSanity = Boolean(sanityFacilities?.length);
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
+  const breadcrumbLD = generateBreadcrumbJSONLD([
+    { name: "Home", url: SITE_URL },
+    { name: "Facilities", url: `${SITE_URL}/facilities` },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbLD }} />
       <PageHero
         label="World-Class Facilities"
         heading="Train in <em>Every</em> Zone"

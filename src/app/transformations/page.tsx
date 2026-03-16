@@ -6,7 +6,7 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { BeforeAfterSlider } from "@/components/transformations/BeforeAfterSlider";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_TRANSFORMATIONS_QUERY } from "@/lib/sanity/queries";
-import { generateMetadata as buildMetadata } from "@/lib/seo";
+import { generateMetadata as buildMetadata, generateBreadcrumbJSONLD } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -83,8 +83,15 @@ export default async function TransformationsPage() {
 
   const usingSanity = Boolean(sanityTransformations?.length);
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
+  const breadcrumbLD = generateBreadcrumbJSONLD([
+    { name: "Home", url: SITE_URL },
+    { name: "Transformations", url: `${SITE_URL}/transformations` },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbLD }} />
       <PageHero
         label="Real Results"
         heading="Member <em>Transformations</em>"

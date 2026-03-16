@@ -11,7 +11,7 @@ import {
   TRAINER_SLUGS_QUERY,
   TRANSFORMATIONS_BY_TRAINER_QUERY,
 } from "@/lib/sanity/queries";
-import { generateJSONLD } from "@/lib/seo";
+import { generateJSONLD, generateBreadcrumbJSONLD } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -31,7 +31,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
 
   if (isSanityConfigured) {
     try {
@@ -118,7 +118,13 @@ export default async function TrainerProfilePage({ params }: Props) {
   const specializations = trainer.specializations ?? [];
   const certifications = trainer.certifications ?? [];
   const gradient = "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.20) 0%, rgba(20,20,20,0.95) 65%)";
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
+
+  const breadcrumbLD = generateBreadcrumbJSONLD([
+    { name: "Home", url: SITE_URL },
+    { name: "Trainers", url: `${SITE_URL}/trainers` },
+    { name, url: `${SITE_URL}/trainers/${slug}` },
+  ]);
 
   const personLD = generateJSONLD("Person", {
     name,
@@ -132,6 +138,7 @@ export default async function TrainerProfilePage({ params }: Props) {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbLD }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: personLD }} />
       {/* Back link */}
       <div className="bg-bg-secondary border-b border-border pt-24 pb-0">

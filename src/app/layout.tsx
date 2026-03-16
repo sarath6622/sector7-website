@@ -32,7 +32,7 @@ const jetbrainsMono = JetBrains_Mono({
   preload: false,
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7gym.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
 const OG_IMAGE = `${SITE_URL}/images/og-image.jpg`;
 
 export const metadata: Metadata = {

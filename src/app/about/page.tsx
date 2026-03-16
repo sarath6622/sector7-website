@@ -5,7 +5,7 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { sanityClient, isSanityConfigured } from "@/lib/sanity/client";
 import { SITE_SETTINGS_ABOUT_QUERY } from "@/lib/sanity/queries";
-import { generateMetadata as buildMetadata } from "@/lib/seo";
+import { generateMetadata as buildMetadata, generateBreadcrumbJSONLD } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -53,8 +53,15 @@ export default async function AboutPage() {
     } catch { /* fall through */ }
   }
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
+  const breadcrumbLD = generateBreadcrumbJSONLD([
+    { name: "Home", url: SITE_URL },
+    { name: "About", url: `${SITE_URL}/about` },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbLD }} />
       <PageHero
         label="Our Story"
         heading="Built for <em>Champions</em>"

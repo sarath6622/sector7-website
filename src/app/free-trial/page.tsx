@@ -2,13 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Shield, Clock, Star } from "lucide-react";
 import { FreeTrialForm } from "@/components/forms/FreeTrialForm";
-import { generateMetadata as buildMetadata } from "@/lib/seo";
+import { generateMetadata as buildMetadata, generateBreadcrumbJSONLD } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Book a Free Gym Trial in Kochi — SEC7OR Fitness",
   description:
     "Book your free trial session at SEC7OR Fitness Kochi. No commitment, no credit card. Just show up and train.",
   path: "/free-trial",
+  keywords: [
+    "free gym trial Kochi", "try gym free Kochi", "free fitness trial Kochi",
+    "join gym Kochi", "gym free session Kochi",
+  ],
 });
 
 const TRUST_POINTS = [
@@ -18,9 +22,17 @@ const TRUST_POINTS = [
   { icon: Star,         text: "Rated 4.8 ★ by 600+ members" },
 ];
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
+const breadcrumbLD = generateBreadcrumbJSONLD([
+  { name: "Home", url: SITE_URL },
+  { name: "Free Trial", url: `${SITE_URL}/free-trial` },
+]);
+
 export default function FreeTrialPage() {
   return (
-    <div className="min-h-screen bg-bg-primary">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbLD }} />
+      <div className="min-h-screen bg-bg-primary">
       {/* Minimal top bar */}
       <div className="fixed top-0 inset-x-0 z-50 bg-bg-primary/95 backdrop-blur-sm border-b border-border">
         <div className="container-section flex items-center justify-between h-16">
@@ -124,5 +136,6 @@ export default function FreeTrialPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

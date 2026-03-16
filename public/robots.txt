@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /studio/
+Disallow: /studio
 
-Sitemap: https://sector7gym.com/sitemap.xml
+Sitemap: https://sector7.in/sitemap.xml

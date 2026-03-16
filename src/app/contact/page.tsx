@@ -3,7 +3,7 @@ import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Youtube } from "lucide
 import { PageHero } from "@/components/ui/PageHero";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
-import { generateMetadata as buildMetadata } from "@/lib/seo";
+import { generateMetadata as buildMetadata, generateBreadcrumbJSONLD } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Contact SEC7OR Fitness Kochi — Visit or Call",
@@ -23,9 +23,16 @@ const SOCIAL = [
   { label: "YouTube",   href: "#", icon: Youtube   },
 ];
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
+const breadcrumbLD = generateBreadcrumbJSONLD([
+  { name: "Home", url: SITE_URL },
+  { name: "Contact", url: `${SITE_URL}/contact` },
+]);
+
 export default function ContactPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbLD }} />
       <PageHero
         label="Get in Touch"
         heading="Contact <em>Us</em>"

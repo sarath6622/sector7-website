@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://sector7gym.com",
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://sector7.in",
   generateRobotsTxt: false, // robots.txt already exists in public/
   sitemapSize: 7000,
   changefreq: "weekly",

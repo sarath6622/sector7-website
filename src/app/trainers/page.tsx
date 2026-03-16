@@ -6,7 +6,7 @@ import { CTABanner } from "@/components/home/CTABanner";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
 import { ALL_TRAINERS_QUERY } from "@/lib/sanity/queries";
-import { generateMetadata as buildMetadata } from "@/lib/seo";
+import { generateMetadata as buildMetadata, generateBreadcrumbJSONLD } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -15,6 +15,10 @@ export const metadata: Metadata = buildMetadata({
   description:
     "Meet SEC7OR Fitness's team of certified coaches — specialists in strength, CrossFit, nutrition, functional training, boxing, and recovery.",
   path: "/trainers",
+  keywords: [
+    "personal trainer Kochi", "certified trainer Kochi", "gym coach Kochi",
+    "CrossFit coach Kochi", "fitness coach Kerala", "strength coach Kochi",
+  ],
 });
 
 // ── Sanity data type ─────────────────────────────────────────────────────────
@@ -42,8 +46,15 @@ export default async function TrainersPage() {
     } catch { /* fall through */ }
   }
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
+  const breadcrumbLD = generateBreadcrumbJSONLD([
+    { name: "Home", url: SITE_URL },
+    { name: "Trainers", url: `${SITE_URL}/trainers` },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbLD }} />
       <PageHero
         label="Expert Guidance"
         heading="Meet the <em>Trainers</em>"
