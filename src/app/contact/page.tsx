@@ -6,6 +6,7 @@ import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
 import { generateMetadata as buildMetadata, generateBreadcrumbJSONLD } from "@/lib/seo";
 import { sanityClient, isSanityConfigured } from "@/lib/sanity/client";
 import { SITE_SETTINGS_QUERY } from "@/lib/sanity/queries";
+import { DarkMapEmbed } from "@/components/ui/DarkMapEmbed";
 
 export const metadata: Metadata = buildMetadata({
   title: "Contact SEC7OR Fitness Kochi — Visit or Call",
@@ -178,18 +179,7 @@ export default async function ContactPage() {
             </div>
 
             {/* Map */}
-            <div className="border border-border overflow-hidden" style={{ height: "260px" }}>
-              <iframe
-                src={mapSrc}
-                width="100%"
-                height="260"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="SEC7OR Fitness on Google Maps"
-              />
-            </div>
+            <DarkMapEmbed src={mapSrc} />
 
             {/* Social */}
             <div className="flex flex-col gap-3">
