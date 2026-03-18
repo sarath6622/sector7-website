@@ -36,7 +36,7 @@ export function Footer() {
             {/* Social Links */}
             <div className="flex items-center gap-4">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/sector7fitness.kochi"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted hover:text-accent transition-colors p-1"

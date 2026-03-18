@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const isProd = process.env.NODE_ENV === "production";
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -39,7 +41,7 @@ const nextConfig: NextConfig = {
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
-              "upgrade-insecure-requests",
+              ...(isProd ? ["upgrade-insecure-requests"] : []),
             ].join("; "),
           },
           { key: "X-Frame-Options",        value: "SAMEORIGIN" },
