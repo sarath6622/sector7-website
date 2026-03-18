@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Instagram, Facebook, Youtube, MapPin, Phone, Mail, Clock } from "lucide-react";
 import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
 import { Logo } from "@/components/ui/Logo";
+import { sanityClient, isSanityConfigured } from "@/lib/sanity/client";
+import { SITE_SETTINGS_QUERY } from "@/lib/sanity/queries";
 
 const QUICK_LINKS = [
   { label: "Facilities",      href: "/facilities" },
@@ -14,9 +16,80 @@ const QUICK_LINKS = [
   { label: "Book Free Trial", href: "/free-trial" },
 ] as const;
 
-export function Footer() {
+// ── Fallbacks ────────────────────────────────────────────────────────────────
+const FALLBACK = {
+  phone: "+91 XX XXXX XXXX",
+  email: "info@sector7gym.com",
+  address: "near Infopark Expressway, Chittethukara,\nKakkanad, Kerala 682037",
+  operatingHours: [
+    { day: "Mon – Sat", open: "5:00 AM", close: "11:00 PM" },
+    { day: "Sunday",    open: "6:00 AM", close: "9:00 PM"  },
+  ],
+  socialLinks: {
+    instagram: "https://www.instagram.com/sector7fitness.kochi",
+    facebook: "",
+    youtube: "",
+  },
+};
+
+interface SiteSettings {
+  phone?: string;
+  email?: string;
+  address?: string;
+  operatingHours?: { day: string; open: string; close: string }[];
+  socialLinks?: { instagram?: string; facebook?: string; youtube?: string };
+}
+
+function summarizeHours(hours: { day: string; open: string; close: string }[]): string {
+  if (hours.length <= 2) {
+    return hours.map((h) => `${h.day}: ${h.open} – ${h.close}`).join(" · ");
+  }
+  // Group by open/close times for compact display
+  const groups: { days: string[]; time: string }[] = [];
+  for (const h of hours) {
+    const time = `${h.open} – ${h.close}`;
+    const last = groups[groups.length - 1];
+    if (last && last.time === time) {
+      last.days.push(h.day);
+    } else {
+      groups.push({ days: [h.day], time });
+    }
+  }
+  return groups
+    .map((g) => {
+      const label =
+        g.days.length === 1
+          ? g.days[0]
+          : `${g.days[0]} – ${g.days[g.days.length - 1]}`;
+      return `${label}: ${g.time}`;
+    })
+    .join(" · ");
+}
+
+const SOCIAL_META = [
+  { key: "instagram" as const, label: "Instagram", Icon: Instagram },
+  { key: "facebook" as const,  label: "Facebook",  Icon: Facebook },
+  { key: "youtube" as const,   label: "YouTube",   Icon: Youtube },
+];
+
+export async function Footer() {
   const currentYear = new Date().getFullYear();
   const waHref = buildWhatsAppURL({ message: WA_MESSAGES.contact, source: "footer" });
+
+  let settings: SiteSettings = {};
+  if (isSanityConfigured) {
+    try {
+      settings = (await sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY)) ?? {};
+    } catch { /* fall through */ }
+  }
+
+  const phone = settings.phone || FALLBACK.phone;
+  const email = settings.email || FALLBACK.email;
+  const address = settings.address || FALLBACK.address;
+  const hours = settings.operatingHours?.length ? settings.operatingHours : FALLBACK.operatingHours;
+  const social = { ...FALLBACK.socialLinks, ...settings.socialLinks };
+  const phoneHref = `tel:${phone.replace(/[\s\-()]/g, "")}`;
+  const hoursSummary = summarizeHours(hours);
 
   return (
     <footer className="bg-bg-secondary border-t border-border" aria-label="Site footer">
@@ -35,33 +108,22 @@ export function Footer() {
 
             {/* Social Links */}
             <div className="flex items-center gap-4">
-              <a
-                href="https://www.instagram.com/sector7fitness.kochi"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted hover:text-accent transition-colors p-1"
-                aria-label="Sector 7 on Instagram"
-              >
-                <Instagram size={20} />
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted hover:text-accent transition-colors p-1"
-                aria-label="Sector 7 on Facebook"
-              >
-                <Facebook size={20} />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted hover:text-accent transition-colors p-1"
-                aria-label="Sector 7 on YouTube"
-              >
-                <Youtube size={20} />
-              </a>
+              {SOCIAL_META.map(({ key, label, Icon }) => {
+                const href = social[key];
+                if (!href) return null;
+                return (
+                  <a
+                    key={key}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted hover:text-accent transition-colors p-1"
+                    aria-label={`Sector 7 on ${label}`}
+                  >
+                    <Icon size={20} />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
@@ -92,38 +154,34 @@ export function Footer() {
             <ul className="flex flex-col gap-4" role="list">
               <li className="flex gap-3">
                 <MapPin size={16} className="text-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
-                <address className="text-muted font-body text-sm not-italic leading-relaxed">
-                  Sector 7 Gym<br />
-                  {/* Replace with actual address from Sanity siteSettings */}
-                  Kochi, Kerala, India
+                <address className="text-muted font-body text-sm not-italic leading-relaxed whitespace-pre-line">
+                  {address}
                 </address>
               </li>
               <li>
                 <a
-                  href="tel:+91XXXXXXXXXX"
+                  href={phoneHref}
                   className="flex gap-3 text-muted hover:text-white font-body text-sm transition-colors group"
                   aria-label="Call Sector 7"
                 >
                   <Phone size={16} className="text-accent flex-shrink-0 mt-0.5 group-hover:text-white transition-colors" aria-hidden="true" />
-                  <span>+91 XX XXXX XXXX</span>
+                  <span>{phone}</span>
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@sector7gym.com"
+                  href={`mailto:${email}`}
                   className="flex gap-3 text-muted hover:text-white font-body text-sm transition-colors group"
                   aria-label="Email Sector 7"
                 >
                   <Mail size={16} className="text-accent flex-shrink-0 mt-0.5 group-hover:text-white transition-colors" aria-hidden="true" />
-                  <span>info@sector7gym.com</span>
+                  <span>{email}</span>
                 </a>
               </li>
               <li className="flex gap-3">
                 <Clock size={16} className="text-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
                 <div className="font-body text-sm">
-                  <span className="text-white font-medium">Mon – Sun</span>
-                  <br />
-                  <span className="text-muted">5:00 AM – 11:00 PM</span>
+                  <span className="text-muted">{hoursSummary}</span>
                 </div>
               </li>
             </ul>
