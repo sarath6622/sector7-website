@@ -12,6 +12,7 @@ import {
   BLOG_SLUGS_QUERY,
 } from "@/lib/sanity/queries";
 import { generateJSONLD, generateBreadcrumbJSONLD } from "@/lib/seo";
+import { PortableTextBody } from "@/components/blog/PortableTextBody";
 
 export const revalidate = 3600;
 
@@ -218,7 +219,10 @@ export default async function BlogPostPage({ params }: Props) {
       <article className="py-16 bg-bg-primary border-b border-border">
         <div className="container-section max-w-2xl">
           <div className="flex flex-col gap-6">
-            {staticContent?.sections.map((section, i) => (
+            {/* Sanity Portable Text body */}
+            {sanityPost?.body && Array.isArray(sanityPost.body) && sanityPost.body.length > 0 ? (
+              <PortableTextBody value={sanityPost.body} />
+            ) : staticContent?.sections.map((section, i) => (
               <div key={i} className="flex flex-col gap-2">
                 {section.heading && (
                   <h2 className="font-display text-2xl tracking-wide text-white uppercase mt-4">{section.heading}</h2>
@@ -226,9 +230,6 @@ export default async function BlogPostPage({ params }: Props) {
                 <p className="font-body text-white/70 text-base leading-relaxed">{section.body}</p>
               </div>
             ))}
-            {!staticContent && sanityPost && (
-              <p className="font-body text-white/70 text-base leading-relaxed">{excerpt}</p>
-            )}
           </div>
 
           {/* WhatsApp CTA */}
