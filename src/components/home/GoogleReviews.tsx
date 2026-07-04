@@ -2,7 +2,8 @@ import { Star } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { sanityClient, isSanityConfigured } from "@/lib/sanity/client";
-import { FEATURED_TESTIMONIALS_QUERY } from "@/lib/sanity/queries";
+import { FEATURED_TESTIMONIALS_QUERY, SITE_SETTINGS_RATING_QUERY } from "@/lib/sanity/queries";
+import { DEFAULT_AGGREGATE_RATING } from "@/lib/seo";
 
 interface Review {
   name: string;
@@ -79,6 +80,8 @@ function StarRow({ count }: { count: number }) {
  */
 export async function GoogleReviews() {
   let reviews: Review[] = STATIC_REVIEWS;
+  let ratingValue: number = DEFAULT_AGGREGATE_RATING.ratingValue;
+  let reviewCount: number = DEFAULT_AGGREGATE_RATING.reviewCount;
 
   if (isSanityConfigured) {
     try {
@@ -92,6 +95,15 @@ export async function GoogleReviews() {
         }));
       }
     } catch { /* fall through to static */ }
+
+    try {
+      const settings = await sanityClient.fetch<{
+        googleRating?: number;
+        googleReviewCount?: number;
+      } | null>(SITE_SETTINGS_RATING_QUERY, {}, { next: { revalidate: 3600 } });
+      if (typeof settings?.googleRating === "number") ratingValue = settings.googleRating;
+      if (typeof settings?.googleReviewCount === "number") reviewCount = settings.googleReviewCount;
+    } catch { /* fall through to default rating */ }
   }
 
   return (
@@ -108,11 +120,11 @@ export async function GoogleReviews() {
           <div className="flex items-center gap-5 self-start md:self-auto">
             <div className="flex flex-col items-end gap-1">
               <span className="font-display text-5xl text-white leading-none">
-                4.8
+                {ratingValue}
               </span>
-              <StarRow count={5} />
+              <StarRow count={Math.round(ratingValue)} />
               <span className="font-body text-xs text-muted mt-0.5">
-                500+ Google reviews
+                {reviewCount}+ Google reviews
               </span>
             </div>
             <div className="w-px h-14 bg-border" aria-hidden="true" />

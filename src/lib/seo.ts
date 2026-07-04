@@ -72,11 +72,22 @@ export function generateBreadcrumbJSONLD(
 }
 
 /**
+ * Default aggregate rating — mirrors the rating shown in the homepage
+ * GoogleReviews section. Used as a fallback when Sanity has no override.
+ * Keep in sync with the real Google Business Profile.
+ */
+export const DEFAULT_AGGREGATE_RATING = { ratingValue: 4.8, reviewCount: 500 };
+
+/**
  * HealthClub / LocalBusiness JSON-LD — used on all pages via root layout.
  * Using HealthClub (subtype of LocalBusiness) for stronger local gym SEO signal.
  */
-export function getLocalBusinessJSONLD(): Record<string, unknown> {
+export function getLocalBusinessJSONLD(
+  rating?: { ratingValue?: number | null; reviewCount?: number | null }
+): Record<string, unknown> {
   const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  const ratingValue = rating?.ratingValue ?? DEFAULT_AGGREGATE_RATING.ratingValue;
+  const reviewCount = rating?.reviewCount ?? DEFAULT_AGGREGATE_RATING.reviewCount;
 
   return {
     "@type": ["HealthClub", "LocalBusiness"],
@@ -125,6 +136,13 @@ export function getLocalBusinessJSONLD(): Record<string, unknown> {
     ],
     currenciesAccepted: "INR",
     paymentAccepted: "Cash, Credit Card, UPI",
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: String(ratingValue),
+      reviewCount: String(reviewCount),
+      bestRating: "5",
+      worstRating: "1",
+    },
     sameAs: [
       "https://www.instagram.com/sector7fitness.kochi",
     ],

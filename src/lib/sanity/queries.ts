@@ -25,6 +25,20 @@ export const SITE_SETTINGS_ABOUT_QUERY = `
   }
 `;
 
+// ─── Site Settings — Homepage rating + FAQs ───────────────────────────────────
+export const SITE_SETTINGS_RATING_QUERY = `
+  *[_type == "siteSettings"][0] {
+    googleRating,
+    googleReviewCount
+  }
+`;
+
+export const HOME_FAQS_QUERY = `
+  *[_type == "siteSettings"][0] {
+    faqs
+  }
+`;
+
 // ─── Trainers ─────────────────────────────────────────────────────────────────
 export const ALL_TRAINERS_QUERY = `
   *[_type == "trainer" && isActive == true] | order(order asc) {

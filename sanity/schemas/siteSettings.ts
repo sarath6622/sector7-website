@@ -129,6 +129,41 @@ export const siteSettings = defineType({
         },
       ],
     }),
+    defineField({
+      name: "faqs",
+      title: "Homepage — FAQs",
+      type: "array",
+      description:
+        "Frequently asked questions shown on the homepage. Also emitted as FAQPage structured data so search engines and AI answer engines can quote the answers.",
+      of: [
+        {
+          type: "object",
+          fields: [
+            { name: "question", type: "string", title: "Question" },
+            { name: "answer", type: "text", title: "Answer", rows: 4 },
+          ],
+          preview: { select: { title: "question" } },
+        },
+      ],
+    }),
+    defineField({
+      name: "googleRating",
+      title: "Google Rating",
+      type: "number",
+      description:
+        "Your current average Google rating (0–5). Shown on the homepage and emitted as aggregateRating structured data. Keep in sync with your real Google Business Profile.",
+      initialValue: 4.8,
+      validation: (Rule) => Rule.min(0).max(5),
+    }),
+    defineField({
+      name: "googleReviewCount",
+      title: "Google Review Count",
+      type: "number",
+      description:
+        "Total number of Google reviews. Shown on the homepage and emitted as aggregateRating structured data.",
+      initialValue: 500,
+      validation: (Rule) => Rule.min(0).integer(),
+    }),
   ],
   preview: {
     select: { title: "gymName" },

@@ -4,6 +4,48 @@
 
 ---
 
+## [2026-07-04] — AI/GEO SEO: FAQPage + aggregateRating
+
+Added the two highest-value structured-data signals for AI answer engines
+(Google AI Overviews, ChatGPT Search, Perplexity, ClaudeBot) and Google rich
+results. Both follow the Sanity-first + static-fallback convention.
+
+### Added
+- `src/components/home/FAQAccordion.tsx` — client accordion. Answers are **always
+  in the DOM** (height-animated, never conditionally unmounted) so crawlers read
+  every answer without triggering the expand interaction.
+- `src/components/home/FAQ.tsx` — homepage FAQ section (Server Component wrapper).
+- Homepage FAQ section + **FAQPage JSON-LD** in `src/app/page.tsx`, with a
+  6-question static fallback (location, hours, free trial, personal training,
+  CrossFit, membership) and Sanity override via `HOME_FAQS_QUERY`.
+- **aggregateRating** on the LocalBusiness/HealthClub schema
+  (`getLocalBusinessJSONLD()` in `src/lib/seo.ts`), sourced from new Sanity
+  fields with a default of 4.8 / 500 (mirrors the visible homepage rating —
+  guideline-safe).
+- `DEFAULT_AGGREGATE_RATING` constant in `src/lib/seo.ts` (single source of truth
+  for the schema default and the GoogleReviews display).
+
+### Changed
+- `sanity/schemas/siteSettings.ts` — new fields: `faqs` (Homepage FAQs),
+  `googleRating` (0–5, default 4.8), `googleReviewCount` (default 500).
+- `src/lib/sanity/queries.ts` — added `SITE_SETTINGS_RATING_QUERY` and
+  `HOME_FAQS_QUERY`.
+- `src/app/layout.tsx` — now async; fetches the rating (explicitly cached with
+  `revalidate: 3600` so all routes stay static/ISR) and passes it into the
+  global LocalBusiness schema.
+- `src/components/home/GoogleReviews.tsx` — the visible rating (was hardcoded
+  4.8 / 500+) now reads `googleRating` / `googleReviewCount` from Sanity, keeping
+  the on-page number in sync with the aggregateRating schema.
+
+### Build verification
+- `npm run build` ✅ — homepage still Static (○, 1h ISR).
+- Rendered HTML confirmed to contain `FAQPage` + `AggregateRating` JSON-LD, the
+  FAQ question/answer text server-side, and the visible 4.8 rating.
+
+### Notes
+- FAQ content and the rating are editable in Studio → Site Settings once seeded;
+  until then the static fallbacks render, so the schema is live immediately.
+
 ## [2026-07-04] — Remove Pricing page
 
 Fully removed the `/pricing` page and every reference to it across the app and CMS.

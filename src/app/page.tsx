@@ -7,8 +7,10 @@ import { TrainersPreview } from "@/components/home/TrainersPreview";
 import { GoogleReviews } from "@/components/home/GoogleReviews";
 import { LocationPreview } from "@/components/home/LocationPreview";
 import { CTABanner } from "@/components/home/CTABanner";
+import { FAQ } from "@/components/home/FAQ";
+import type { FAQItem } from "@/components/home/FAQAccordion";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
-import { ALL_TRAINERS_QUERY, FEATURED_TRANSFORMATIONS_QUERY, FACILITIES_PREVIEW_QUERY, HERO_IMAGE_QUERY } from "@/lib/sanity/queries";
+import { ALL_TRAINERS_QUERY, FEATURED_TRANSFORMATIONS_QUERY, FACILITIES_PREVIEW_QUERY, HERO_IMAGE_QUERY, HOME_FAQS_QUERY } from "@/lib/sanity/queries";
 import type { TrainerPreviewItem } from "@/components/home/TrainersPreview";
 import type { TransformationPreviewItem } from "@/components/home/TransformationPreview";
 import { generateMetadata as buildMetadata, generateJSONLD } from "@/lib/seo";
@@ -30,6 +32,40 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export const revalidate = 3600;
+
+// ── Static FAQ fallback (used when Sanity has no FAQs) ────────────────────────
+const STATIC_FAQS: FAQItem[] = [
+  {
+    question: "Where is Sector 7 located?",
+    answer:
+      "Sector 7 (SEC7OR Fitness) is in Kakkanad, Kochi — near the Infopark Expressway, Chittethukara. Free on-site parking is available.",
+  },
+  {
+    question: "What are your gym timings?",
+    answer:
+      "We're open every day from 5:00 AM to 11:00 PM, so you can train early before work or late in the evening.",
+  },
+  {
+    question: "Can I try the gym before joining?",
+    answer:
+      "Yes — your first session is always free. Book a free trial and train with us before committing to any membership.",
+  },
+  {
+    question: "Do you offer personal training?",
+    answer:
+      "Yes. We have certified personal trainers for one-on-one coaching, plus structured group and CrossFit classes for every fitness level.",
+  },
+  {
+    question: "Do you have a CrossFit box?",
+    answer:
+      "Yes. Sector 7 has a dedicated CrossFit box with certified coaches, alongside strength, cardio, and functional training zones.",
+  },
+  {
+    question: "How do I sign up for a membership?",
+    answer:
+      "Book a free trial or contact us and our team will walk you through the current membership options and help you get started.",
+  },
+];
 
 /**
  * Homepage — /
@@ -104,6 +140,15 @@ export default async function HomePage() {
     } catch { /* fall through */ }
   }
 
+  // ── FAQs ────────────────────────────────────────────────────────────────────
+  let faqs: FAQItem[] = STATIC_FAQS;
+  if (isSanityConfigured) {
+    try {
+      const data = await sanityClient.fetch<{ faqs?: FAQItem[] } | null>(HOME_FAQS_QUERY);
+      if (data?.faqs?.length) faqs = data.faqs;
+    } catch { /* fall through to static */ }
+  }
+
   const websiteLD = generateJSONLD("WebSite", {
     name: "Sector 7",
     url: SITE_URL,
@@ -114,11 +159,23 @@ export default async function HomePage() {
     },
   });
 
+  const faqLD = generateJSONLD("FAQPage", {
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  });
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: websiteLD }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: faqLD }}
       />
       <Hero heroImageUrl={heroImageUrl} />
       <Highlights />
@@ -127,6 +184,7 @@ export default async function HomePage() {
       <TrainersPreview trainers={trainers} />
       <GoogleReviews />
       <LocationPreview />
+      <FAQ items={faqs} />
       <CTABanner />
     </>
   );

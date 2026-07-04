@@ -3,6 +3,8 @@ import { Bebas_Neue, DM_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteChrome }        from "@/components/layout/SiteChrome";
 import { GoogleAnalytics, MicrosoftClarity } from "@/components/layout/Analytics";
+import { sanityClient, isSanityConfigured } from "@/lib/sanity/client";
+import { SITE_SETTINGS_RATING_QUERY } from "@/lib/sanity/queries";
 import { generateJSONLD, getLocalBusinessJSONLD } from "@/lib/seo";
 
 const bebasNeue = Bebas_Neue({
@@ -54,12 +56,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const localBusinessLD = generateJSONLD("LocalBusiness", getLocalBusinessJSONLD());
+  // Pull the live Google rating for aggregateRating structured data.
+  // Explicitly cached (revalidate) so all routes stay static / ISR.
+  let rating: { ratingValue?: number | null; reviewCount?: number | null } | undefined;
+  if (isSanityConfigured) {
+    try {
+      const settings = await sanityClient.fetch<{
+        googleRating?: number;
+        googleReviewCount?: number;
+      } | null>(SITE_SETTINGS_RATING_QUERY, {}, { next: { revalidate: 3600 } });
+      if (settings) {
+        rating = { ratingValue: settings.googleRating, reviewCount: settings.googleReviewCount };
+      }
+    } catch { /* fall through to default rating */ }
+  }
+
+  const localBusinessLD = generateJSONLD("LocalBusiness", getLocalBusinessJSONLD(rating));
 
   return (
     <html
