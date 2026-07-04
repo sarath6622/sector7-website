@@ -34,7 +34,6 @@ export default defineConfig({
             S.documentTypeListItem("transformation") .title("Transformations"),
             S.documentTypeListItem("blogPost")       .title("Blog Posts"),
             S.documentTypeListItem("facility")       .title("Facility Zones"),
-            S.documentTypeListItem("pricingPlan")    .title("Pricing Plans"),
             S.documentTypeListItem("testimonial")    .title("Testimonials"),
           ]),
     }),

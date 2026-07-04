@@ -8,7 +8,6 @@ import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
 
 /** Map pathname prefixes to contextual WhatsApp messages */
 function getSmartMessage(pathname: string): string {
-  if (pathname.startsWith("/pricing"))         return WA_MESSAGES.pricing("your chosen");
   if (pathname.startsWith("/trainers/"))       return WA_MESSAGES.trainer("a trainer");
   if (pathname.startsWith("/transformations")) return WA_MESSAGES.hero;
   if (pathname.startsWith("/contact"))         return WA_MESSAGES.contact;

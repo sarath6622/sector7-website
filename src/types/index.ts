@@ -76,18 +76,6 @@ export interface Facility {
   order: number;
 }
 
-// ─── Pricing Plan ─────────────────────────────────────────────────────────────
-export interface PricingPlan {
-  _id: string;
-  name: string;
-  monthlyPrice: number;
-  quarterlyPrice: number;
-  annualPrice: number;
-  features: string[];
-  isPopular: boolean;
-  order: number;
-}
-
 // ─── Testimonial ─────────────────────────────────────────────────────────────
 export interface Testimonial {
   _id: string;

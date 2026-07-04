@@ -20,7 +20,6 @@ const TYPE_TO_PATHS: Record<string, string[]> = {
   transformation: ["/transformations"],
   blogPost:       ["/blog", "/blog/[slug]"],
   facility:       ["/facilities"],
-  pricingPlan:    ["/pricing"],
   testimonial:    ["/"],
   siteSettings:   ["/"],
 };

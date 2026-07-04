@@ -4,6 +4,38 @@
 
 ---
 
+## [2026-07-04] — Remove Pricing page
+
+Fully removed the `/pricing` page and every reference to it across the app and CMS.
+
+### Removed
+- `src/app/pricing/` — route (`page.tsx`, `loading.tsx`).
+- `src/components/pricing/FAQAccordion.tsx` — used only by the pricing page (dir now empty/removed).
+- `sanity/schemas/pricingPlan.ts` — Sanity content-model schema for pricing plans.
+
+### Changed
+- `src/components/layout/Navbar.tsx` — removed "Pricing" nav link.
+- `src/components/layout/Footer.tsx` — removed "Pricing" quick link.
+- `src/components/layout/WhatsAppFAB.tsx` — removed the `/pricing` contextual-message branch.
+- `src/lib/whatsapp.ts` — removed `WA_MESSAGES.pricing`.
+- `next-sitemap.config.js` — removed `/pricing` from `additionalPaths` (sitemap regenerated).
+- `src/app/api/revalidate/route.ts` — removed `pricingPlan → ["/pricing"]` mapping.
+- `src/lib/sanity/queries.ts` — removed `ALL_PRICING_PLANS_QUERY`.
+- `src/types/index.ts` — removed `PricingPlan` interface.
+- `sanity/schemas/index.ts` — removed `pricingPlan` import + registration.
+- `sanity.config.ts` — removed "Pricing Plans" Studio desk list item.
+
+### Follow-up cleanup — orphaned Pricing FAQs
+- `sanity/schemas/siteSettings.ts` — removed the `faqs` field ("Pricing Page — FAQs"), orphaned once the Pricing page was deleted.
+- `src/lib/sanity/queries.ts` — removed `FAQS_QUERY` (only the deleted Pricing page consumed it).
+
+### Notes
+- Existing `pricingPlan` documents in the Sanity dataset are untouched but are no longer editable in Studio; restore the schema from git if pricing is reinstated.
+- Any existing `faqs` data on the `siteSettings` document is likewise orphaned (field removed from schema) but still present in the dataset.
+
+### Build verification
+- `npm run build` ✅ — zero TypeScript errors, no `/pricing` route, sitemap regenerated without `/pricing`.
+
 ## [2026-03-07] — Phase 1: Init
 - Created CLAUDE.md, docs/ folder structure (all 8 doc files)
 

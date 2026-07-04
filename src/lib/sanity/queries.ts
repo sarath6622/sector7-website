@@ -25,12 +25,6 @@ export const SITE_SETTINGS_ABOUT_QUERY = `
   }
 `;
 
-export const FAQS_QUERY = `
-  *[_type == "siteSettings"][0] {
-    faqs
-  }
-`;
-
 // ─── Trainers ─────────────────────────────────────────────────────────────────
 export const ALL_TRAINERS_QUERY = `
   *[_type == "trainer" && isActive == true] | order(order asc) {
@@ -175,23 +169,6 @@ export const ALL_FACILITIES_QUERY = `
 export const FACILITIES_PREVIEW_QUERY = `
   *[_type == "facility"] | order(order asc) {
     "image": images[0]
-  }
-`;
-
-// ─── Pricing Plans ────────────────────────────────────────────────────────────
-export const ALL_PRICING_PLANS_QUERY = `
-  *[_type == "pricingPlan"] | order(order asc) {
-    _id,
-    name,
-    description,
-    monthlyPrice,
-    quarterlyPrice,
-    annualPrice,
-    features,
-    notIncluded,
-    badge,
-    isHighlighted,
-    order
   }
 `;
 

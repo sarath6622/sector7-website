@@ -22,8 +22,6 @@ export function buildWhatsAppURL({ phone, message, source }: WhatsAppOptions): s
 export const WA_MESSAGES = {
   fab: "Hi! I'm interested in Sector 7. Can you share details?",
   hero: "Hi! I'd like to know about membership plans at Sector 7.",
-  pricing: (planName: string) =>
-    `Hi! I'd like to know about the ${planName} membership at Sector 7.`,
   trainer: (trainerName: string) =>
     `Hi! I'm interested in personal training with ${trainerName} at Sector 7.`,
   contact: "Hi! I'd like to visit Sector 7. Can I get directions and timing?",

@@ -11,7 +11,6 @@ const QUICK_LINKS = [
   { label: "Transformations", href: "/transformations" },
   { label: "About",           href: "/about" },
   { label: "Blog",            href: "/blog" },
-  { label: "Pricing",         href: "/pricing" },
   { label: "Contact",         href: "/contact" },
   { label: "Book Free Trial", href: "/free-trial" },
 ] as const;

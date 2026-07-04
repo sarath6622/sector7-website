@@ -129,22 +129,6 @@ export const siteSettings = defineType({
         },
       ],
     }),
-    defineField({
-      name: "faqs",
-      title: "Pricing Page — FAQs",
-      type: "array",
-      description: "Frequently asked questions shown on the Pricing page",
-      of: [
-        {
-          type: "object",
-          fields: [
-            { name: "question", type: "string", title: "Question" },
-            { name: "answer", type: "text", title: "Answer", rows: 4 },
-          ],
-          preview: { select: { title: "question" } },
-        },
-      ],
-    }),
   ],
   preview: {
     select: { title: "gymName" },
