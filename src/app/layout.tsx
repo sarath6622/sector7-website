@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, DM_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Navbar }            from "@/components/layout/Navbar";
-import { Footer }            from "@/components/layout/Footer";
-import { MobileBottomCTA }   from "@/components/layout/MobileBottomCTA";
+import { SiteChrome }        from "@/components/layout/SiteChrome";
 import { GoogleAnalytics, MicrosoftClarity } from "@/components/layout/Analytics";
-import { TrialPopup } from "@/components/layout/TrialPopup";
-import { ScrollProgress } from "@/components/layout/ScrollProgress";
-import { CursorGlow } from "@/components/layout/CursorGlow";
 import { generateJSONLD, getLocalBusinessJSONLD } from "@/lib/seo";
 
 const bebasNeue = Bebas_Neue({
@@ -78,16 +73,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: localBusinessLD }}
         />
 
-        <a href="#main-content" className="skip-to-content">
-          Skip to main content
-        </a>
-        <CursorGlow />
-        <ScrollProgress />
-        <Navbar />
-        <main id="main-content">{children}</main>
-        <Footer />
-        <MobileBottomCTA />
-        <TrialPopup />
+        <SiteChrome>{children}</SiteChrome>
 
         {/* Analytics — load after interactive, no-op if env vars not set */}
         <GoogleAnalytics />
