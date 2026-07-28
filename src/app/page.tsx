@@ -20,7 +20,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sector7.in";
 export const metadata: Metadata = buildMetadata({
   title: "Sector 7 | Premier Gym in Kochi",
   description:
-    "Sector 7 is Kochi's premier gym — elite equipment, certified trainers, and thousands of proven transformations. Book your free trial today.",
+    "Sector 7 is Kochi's premier gym — elite equipment, certified trainers, and thousands of proven transformations. Get in touch to start training today.",
   path: "/",
   keywords: [
     "gym in Kochi", "best gym Kochi", "gym near me Kochi",
@@ -46,9 +46,9 @@ const STATIC_FAQS: FAQItem[] = [
       "We're open every day from 5:00 AM to 11:00 PM, so you can train early before work or late in the evening.",
   },
   {
-    question: "Can I try the gym before joining?",
+    question: "Can I visit the gym before joining?",
     answer:
-      "Yes — your first session is always free. Book a free trial and train with us before committing to any membership.",
+      "Absolutely. Drop by during opening hours or get in touch to arrange a walkthrough — our team will show you every training zone and answer your questions.",
   },
   {
     question: "Do you offer personal training?",
@@ -63,7 +63,7 @@ const STATIC_FAQS: FAQItem[] = [
   {
     question: "How do I sign up for a membership?",
     answer:
-      "Book a free trial or contact us and our team will walk you through the current membership options and help you get started.",
+      "Contact us or visit the gym, and our team will walk you through the current membership options and help you get started.",
   },
 ];
 

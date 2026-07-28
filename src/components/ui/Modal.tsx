@@ -33,8 +33,8 @@ const sizeMap: Record<NonNullable<ModalProps["size"]>, string> = {
  * Usage:
  *   const [open, setOpen] = useState(false);
  *   <Button onClick={() => setOpen(true)}>Open</Button>
- *   <Modal isOpen={open} onClose={() => setOpen(false)} title="Book a Trial">
- *     <FreeTrialForm />
+ *   <Modal isOpen={open} onClose={() => setOpen(false)} title="Get in Touch">
+ *     <ContactForm />
  *   </Modal>
  */
 export function Modal({ isOpen, onClose, title, children, size = "md", className }: ModalProps) {

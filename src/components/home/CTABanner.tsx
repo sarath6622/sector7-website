@@ -11,7 +11,7 @@ export function CTABanner() {
     <section
       className="relative overflow-hidden py-20 md:py-28"
       style={{ backgroundColor: "#FF5500" }}
-      aria-label="Call to action — book your free trial"
+      aria-label="Call to action — join Sector 7"
     >
       <GrainOverlay opacity={0.055} />
 
@@ -40,13 +40,13 @@ export function CTABanner() {
         </h2>
 
         <p className="font-body text-white/80 text-base md:text-lg max-w-xl leading-relaxed">
-          Stop waiting for the perfect time. Your first training session is
-          completely free. Come in, train hard, and leave different.
+          Stop waiting for the perfect time. Talk to our team about membership
+          options. Come in, train hard, and leave different.
         </p>
 
         <div className="flex flex-wrap justify-center gap-4">
-          <Button variant="secondary" href="/free-trial" size="lg">
-            Book Your Free Trial
+          <Button variant="secondary" href="/contact" size="lg">
+            Get Started
           </Button>
           <Button
             variant="secondary"

@@ -42,7 +42,7 @@ const POST_CONTENT: PostContent[] = [
       { heading: "What Traditional Gym Training Does Well", body: "Structured hypertrophy programming, strength sport prep (powerlifting, Olympic lifting), body recomposition, and long-term progressive overload. If your goal is building maximum muscle or getting very strong at specific lifts, traditional periodized programming is hard to beat." },
       { heading: "What CrossFit Does Well", body: "Conditioning, community accountability, movement variety, and developing broad physical capacity. CrossFit athletes are genuinely fit in the widest sense — they can run, lift, row, climb, and sprint. If you want to be 'generally athletic', CrossFit is an excellent vehicle." },
       { heading: "The Real Question", body: "What do you actually want? If you want to look good on a beach, either works. If you want to compete in powerlifting, skip CrossFit. If you want to run a half marathon and also deadlift heavy, CrossFit might suit you better. If you hate group classes, traditional training is the answer regardless." },
-      { body: "At SEC7OR we have both — a fully equipped strength floor and a proper CrossFit box. Come in for a free trial and try both. You'll know within one session which one speaks to you." },
+      { body: "At SEC7OR we have both — a fully equipped strength floor and a proper CrossFit box. Come in, talk to a coach, and see both. You'll know quickly which one speaks to you." },
     ],
   },
   {
@@ -53,7 +53,7 @@ const POST_CONTENT: PostContent[] = [
       { heading: "Protein Second", body: "Protein is the most important macronutrient for body composition. It preserves muscle during a cut, builds muscle during a bulk, and keeps you full. Aim for 1.6–2.2g per kg of bodyweight daily. This is higher than most people eat and lower than most fitness influencers recommend." },
       { heading: "Fill the Rest with Foods You Enjoy", body: "Carbs and fats can be distributed however you prefer, based on food preferences and meal timing around training. You don't need to eat chicken and rice. You can eat South Indian food, dal, roti — whatever works for your lifestyle and culture. Sustainability is everything." },
       { heading: "Tracking", body: "Track your food for at least 4 weeks at the start. Not forever — just long enough to understand portion sizes and calorie density. Most people are shocked by how much (or how little) they're actually eating. Data beats guessing." },
-      { body: "At SEC7OR, every transformation client gets a nutrition consultation with Rohit Kumar. Book your free trial and we'll assess your current nutrition and give you a starting framework at no extra cost." },
+      { body: "At SEC7OR, every transformation client gets a nutrition consultation with Rohit Kumar. Get in touch and we'll assess your current nutrition and give you a starting framework at no extra cost." },
     ],
   },
 ];

@@ -105,8 +105,8 @@ export function Hero({ heroImageUrl }: { heroImageUrl?: string | null }) {
             variants={shouldReduce ? {} : item}
             className="flex flex-col sm:flex-row sm:flex-wrap gap-3 pt-1"
           >
-            <Button variant="primary" href="/free-trial" size="lg" className="w-full sm:w-auto">
-              Book Free Trial
+            <Button variant="primary" href="/contact" size="lg" className="w-full sm:w-auto">
+              Join Now
             </Button>
             <Button variant="secondary" href="/facilities" size="lg" className="w-full sm:w-auto">
               Explore Facilities

@@ -19,7 +19,7 @@
 | **Email** | Resend |
 | **Deployment** | Vercel |
 | **Package manager** | npm |
-| **Primary goal** | Convert visitors into walk-ins, trial bookings, or app installs |
+| **Primary goal** | Convert visitors into walk-ins, membership enquiries, or app installs |
 
 ---
 
@@ -69,9 +69,9 @@ Implement one phase per session. Mark complete in CHANGELOG when build passes.
 | 4 | Layout components: Navbar, Footer, WhatsAppFAB, MobileBottomCTA, PageTransition | ✅ Done |
 | 5 | Shared UI components: Logo, Button, SectionHeading, AnimatedCounter, ScrollReveal, GrainOverlay, Skeleton, Modal | ✅ Done |
 | 6 | Homepage sections: Hero, Highlights, FacilitiesPreview, TransformationPreview, TrainersPreview, GoogleReviews, LocationPreview, CTABanner | ✅ Done |
-| 7 | All inner pages: /facilities, /trainers, /trainers/[slug], /transformations, /about, /blog, /blog/[slug], /pricing, /contact, /free-trial, /not-found, /error | ✅ Done |
+| 7 | All inner pages: /facilities, /trainers, /trainers/[slug], /transformations, /about, /blog, /blog/[slug], /pricing, /contact, /not-found, /error | ✅ Done |
 | 8 | Sanity CMS: schemas, Studio embed (/studio), ISR revalidation webhook, all pages Sanity-first | ✅ Done |
-| 9 | API routes wired: /api/contact, /api/trial, /api/newsletter — Resend email, rate limiting, honeypot | ✅ Done |
+| 9 | API routes wired: /api/contact, /api/newsletter — Resend email, rate limiting, honeypot | ✅ Done |
 | 10 | SEO + Analytics: generateMetadata on all pages, JSON-LD schemas, GA4 + Clarity scripts, next-sitemap | ✅ Done |
 | 11 | Content + real assets: swap placeholders for real gym photos, logo, OG image | ⏳ Pending |
 | 12 | Performance audit: Lighthouse > 90 everywhere, LCP < 2s, CLS < 0.1 | ⏳ Pending |

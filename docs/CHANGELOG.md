@@ -412,3 +412,52 @@ Fully removed the `/pricing` page and every reference to it across the app and C
 2. Scroll to **Hero Image** field (above Default OG Image)
 3. Upload gym photo (portrait, ~1200×1120px recommended)
 4. Publish — image appears live after next ISR revalidation (1h) or on redeploy
+
+---
+
+## [2026-07-28] — Free Trial Removed Sitewide
+
+The gym has discontinued its free trial programme. Every trial-related route,
+component, API, form, copy string, and analytics event has been removed. The
+primary conversion path is now the existing `/contact` page.
+
+### Removed
+- `src/app/free-trial/page.tsx` — the trial landing page (and its self-contained header).
+- `src/app/api/trial/route.ts` — trial booking API route (Resend notification + confirmation emails).
+- `src/components/forms/FreeTrialForm.tsx` — full trial booking form.
+- `src/components/layout/TrialPopup.tsx` — auto-triggered popup (30s timer / 45% scroll depth / exit intent) with its mini booking form.
+- `src/lib/whatsapp.ts` — `WA_MESSAGES.trialConfirmation` and `WA_MESSAGES.trialBooking`.
+- `src/lib/analytics.ts` — `GA_EVENTS.trialFormStart` and `GA_EVENTS.trialFormSubmit`.
+- `src/types/index.ts` — `TrialFormData` interface.
+- `next-sitemap.config.js` — `/free-trial` entry (`/contact` raised 0.7 → 0.9 to take over as the top conversion page).
+
+### Changed
+- `next.config.ts` — added `redirects()`: `/free-trial` → `/contact` with `permanent: true`, so existing inbound links, search results, and printed QR codes keep working and pass SEO equity to `/contact`. Note: Next.js emits **308 Permanent Redirect** (not 301) for `permanent: true` — Google treats the two identically for link-equity purposes.
+- `src/components/layout/SiteChrome.tsx` — dropped `<TrialPopup />` and its import; doc comment no longer mentions popups.
+- `src/components/layout/Navbar.tsx` — desktop CTA "BOOK FREE TRIAL" → **"JOIN NOW"** (`/contact`); mobile menu CTA "Book Free Trial" → **"Join Now"** (`/contact`). Removed the `isFreeTrial` check that returned `null` (the page it guarded no longer exists), so the global nav now renders on every non-Studio route.
+- `src/components/layout/MobileBottomCTA.tsx` — primary button "BOOK FREE TRIAL" → **"JOIN NOW"** (`/contact`); GA4 `cta_click` payload updated (`cta_text: "Join Now"`, `destination: "/contact"`). Removed the `isHidden` pathname guard and the now-unused `usePathname` import.
+- `src/components/layout/Footer.tsx` — removed the "Book Free Trial" quick link.
+- `src/components/home/Hero.tsx` — primary CTA "Book Free Trial" → **"Join Now"** (`/contact`).
+- `src/components/home/CTABanner.tsx` — CTA "Book Your Free Trial" → **"Get Started"** (`/contact`); body copy no longer promises a free first session; `aria-label` updated.
+- `src/app/trainers/[slug]/page.tsx` — CTA "Book a Session" → **"Enquire Now"** (`/contact`).
+- `src/app/page.tsx` — metadata description no longer says "Book your free trial today". Static FAQ fallback: "Can I try the gym before joining?" reworded to "Can I visit the gym before joining?" (walkthrough, not a free session); the membership sign-up answer no longer references a trial.
+- `src/app/layout.tsx` — root metadata description updated to match.
+- `src/app/blog/[slug]/page.tsx` — two static fallback article closers no longer pitch a free trial.
+- `src/components/ui/Modal.tsx` — JSDoc usage example now references `ContactForm` instead of the deleted `FreeTrialForm`.
+
+### Docs updated
+- `CLAUDE.md` — primary goal now "membership enquiries"; `/free-trial` and `/api/trial` dropped from the Phase 7 / Phase 9 rows.
+- `docs/architecture/ARCHITECTURE.md` — removed `free-trial/page.tsx` and `api/trial/route.ts` from the tree, the "Free Trial" rendering-strategy row, and `/api/trial` from the rate-limiting note.
+- `docs/architecture/api-routes.md` — removed the entire `POST /api/trial` section.
+- `docs/ui-components/COMPONENTS.md` — removed the `FreeTrialForm` entry; Navbar / MobileBottomCTA / Button entries updated to the new CTA labels and targets.
+
+### Verification
+- `npm run build` ✅ — exit 0, zero TypeScript errors, 17 routes (was 19: `/free-trial` and `/api/trial` gone).
+- `npm run lint` ✅ — no new errors. Problem count dropped 24 → 12; all 12 remaining are pre-existing (`useMediaQuery`, `AnimatedCounter`, `BeforeAfterSlider`, `ImageGallery`, `Navbar` scroll effect, unescaped entities).
+- `grep -ri trial src/ sanity/` — clean; only remaining hits are the intentional redirect comment in `next.config.ts` and the word "Indus**trial**" in the Footer tagline.
+- `public/sitemap-0.xml` regenerated — zero `/free-trial` entries.
+
+### Follow-up for the site owner
+- **Sanity CMS content checked — clean.** All 22 published documents (trainers, facilities, testimonials, transformations, the blog post, and siteSettings) were queried and none mention "trial". `siteSettings.faqs` is `null`, so the homepage renders the static FAQ fallback in `src/app/page.tsx` that was updated above. If trial copy is ever added back via the Studio at `/studio`, it will render — the code no longer references it anywhere.
+- GA4: the `trial_form_start` / `trial_form_submit` events will stop firing. Retire or archive any GA4 goals, funnels, or Looker Studio reports that depend on them.
+- Any external ads, Google Business profile posts, or printed material pointing at `/free-trial` will now land on `/contact` via the 301 — worth updating the creative to match the new messaging.

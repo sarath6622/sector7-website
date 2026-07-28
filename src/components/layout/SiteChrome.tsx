@@ -4,13 +4,12 @@ import { usePathname } from "next/navigation";
 import { Navbar }          from "@/components/layout/Navbar";
 import { Footer }          from "@/components/layout/Footer";
 import { MobileBottomCTA } from "@/components/layout/MobileBottomCTA";
-import { TrialPopup }      from "@/components/layout/TrialPopup";
 import { ScrollProgress }  from "@/components/layout/ScrollProgress";
 import { CursorGlow }      from "@/components/layout/CursorGlow";
 
 /**
  * Wraps page content with the marketing-site chrome (fixed navbar, footer,
- * bottom CTA, popups, scroll/cursor overlays).
+ * bottom CTA, scroll/cursor overlays).
  *
  * The embedded Sanity Studio at /studio renders its own full-screen UI, so this
  * chrome MUST be skipped there — the fixed navbar (z-[60]) would otherwise
@@ -34,7 +33,6 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <main id="main-content">{children}</main>
       <Footer />
       <MobileBottomCTA />
-      <TrialPopup />
     </>
   );
 }

@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
     ],
     formats: ["image/avif", "image/webp"],
   },
+  async redirects() {
+    return [
+      // Free trial was discontinued — preserve inbound links / search equity
+      { source: "/free-trial", destination: "/contact", permanent: true },
+    ];
+  },
   async headers() {
     return [
       // ── Sanity Studio — relaxed CSP (Studio manages its own security) ──────────

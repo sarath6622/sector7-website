@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     template: "%s | Sector 7 Gym Kochi",
   },
   description:
-    "Sector 7 is Kochi's premier gym — elite equipment, certified trainers, and thousands of proven transformations. Book your free trial today.",
+    "Sector 7 is Kochi's premier gym — elite equipment, certified trainers, and thousands of proven transformations. Get in touch to start training today.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
     type: "website",

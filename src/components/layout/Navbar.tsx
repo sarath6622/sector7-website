@@ -22,7 +22,6 @@ export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const isFreeTrial = pathname === "/free-trial";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -39,9 +38,6 @@ export function Navbar() {
 
   const isActive = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(href + "/"));
-
-  // Free-trial page has its own self-contained header — don't render the global nav
-  if (isFreeTrial) return null;
 
   return (
     <>
@@ -82,10 +78,10 @@ export function Navbar() {
           </nav>
 
           <Link
-            href="/free-trial"
+            href="/contact"
             className="hidden lg:inline-flex items-center bg-accent hover:bg-accent-hover text-white font-body font-semibold text-sm px-5 py-2.5 tracking-wider transition-colors accent-glow"
           >
-            BOOK FREE TRIAL
+            JOIN NOW
           </Link>
 
           <button
@@ -205,11 +201,11 @@ export function Navbar() {
               transition={{ delay: 0.45, duration: 0.3 }}
             >
               <Link
-                href="/free-trial"
+                href="/contact"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center justify-center bg-accent hover:bg-accent-hover text-white font-body font-semibold text-sm py-4 tracking-widest uppercase transition-colors accent-glow"
               >
-                Book Free Trial
+                Join Now
               </Link>
               {/* WhatsApp — text-white/65 meets WCAG AA contrast on dark bg */}
               <a

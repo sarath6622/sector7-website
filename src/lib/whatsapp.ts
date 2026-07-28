@@ -25,17 +25,7 @@ export const WA_MESSAGES = {
   trainer: (trainerName: string) =>
     `Hi! I'm interested in personal training with ${trainerName} at Sector 7.`,
   contact: "Hi! I'd like to visit Sector 7. Can I get directions and timing?",
-  trialConfirmation: (date: string) =>
-    `Hi! I just booked a free trial at Sector 7 for ${date}. Please confirm.`,
   blog: (articleTitle: string) =>
     `Hi! I read your article on "${articleTitle}". I'd like to know more about training at Sector 7.`,
   afterHours: "Hi! I'm trying to reach Sector 7 outside business hours. Please get back to me.",
-  trialBooking: (details: {
-    name: string;
-    phone: string;
-    date: string;
-    timeSlot: string;
-    goal: string;
-  }) =>
-    `Hi! I'd like to book a free trial at Sector 7.\n\nName: ${details.name}\nPhone: ${details.phone}\nPreferred Date: ${details.date}\nTime Slot: ${details.timeSlot}\nGoal: ${details.goal}`,
 } as const;

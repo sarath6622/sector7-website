@@ -136,17 +136,6 @@ export interface ContactFormData {
   honeypot?: string;
 }
 
-export interface TrialFormData {
-  name: string;
-  phone: string;
-  email: string;
-  preferredDate: string;
-  preferredTime: "Morning (6AM–10AM)" | "Afternoon (12PM–4PM)" | "Evening (5PM–9PM)";
-  fitnessGoal: "Weight Loss" | "Muscle Gain" | "General Fitness" | "Strength" | "Other";
-  referralSource: "Google" | "Instagram" | "Friend/Family" | "Walk-in" | "Other";
-  honeypot?: string;
-}
-
 export interface NewsletterFormData {
   email: string;
   honeypot?: string;

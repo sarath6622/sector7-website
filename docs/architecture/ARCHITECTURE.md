@@ -49,10 +49,8 @@ sector7-website/                  (project root inside "Sector 7/")
 │   │   │   └── [slug]/page.tsx   # Blog post
 │   │   ├── contact/page.tsx
 │   │   ├── pricing/page.tsx
-│   │   ├── free-trial/page.tsx   # Conversion landing page (minimal nav)
 │   │   ├── api/
 │   │   │   ├── contact/route.ts
-│   │   │   ├── trial/route.ts
 │   │   │   ├── newsletter/route.ts
 │   │   │   └── revalidate/route.ts
 │   │   ├── not-found.tsx
@@ -65,7 +63,7 @@ sector7-website/                  (project root inside "Sector 7/")
 │   │   ├── transformations/      # BeforeAfterSlider, TransformationCard
 │   │   ├── blog/                 # BlogCard, BlogContent
 │   │   ├── ui/                   # Button, SectionHeading, AnimatedCounter, ScrollReveal, GrainOverlay, Skeleton, Modal
-│   │   └── forms/                # FreeTrialForm, ContactForm, NewsletterForm
+│   │   └── forms/                # ContactForm, NewsletterForm
 │   ├── lib/
 │   │   ├── sanity/
 │   │   │   ├── client.ts
@@ -131,7 +129,6 @@ Browser → Next.js App Router
 | Blog [slug] | ISR 1h | Webhook | post by slug | `Article` |
 | Pricing | ISR 1h | Webhook | pricingPlan docs + siteSettings.faqs | `FAQPage` + `Product`/`Offer` |
 | Contact | Static | — | — | — |
-| Free Trial | Static | — | — | — |
 | API routes | Dynamic | — | — | — |
 
 **All pages** additionally receive `LocalBusiness` JSON-LD injected in the root layout.
@@ -223,7 +220,7 @@ Both scripts are loaded via `next/script` with `strategy="afterInteractive"` —
 
 - HTTPS enforced (Vercel default)
 - CSP headers in `next.config.ts`
-- Rate limiting on `/api/contact`, `/api/trial`, `/api/newsletter` (3 req/IP/hour)
+- Rate limiting on `/api/contact`, `/api/newsletter` (3 req/IP/hour)
 - Honeypot fields on all public forms
 - Server secrets never prefixed with `NEXT_PUBLIC_`
 - All user inputs sanitized server-side before email dispatch

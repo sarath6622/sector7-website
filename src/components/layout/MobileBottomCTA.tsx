@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { trackEvent, GA_EVENTS } from "@/lib/analytics";
 import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
@@ -10,25 +9,18 @@ import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
 /**
  * Sticky bottom CTA bar — mobile only (< 768px).
  * Appears after the user scrolls past the hero section (80vh).
- * Hidden on the /free-trial page to avoid distraction.
  */
 export function MobileBottomCTA() {
-  const pathname  = usePathname();
   const [visible, setVisible] = useState(false);
-  const isHidden  = pathname === "/free-trial";
-  const waHref    = buildWhatsAppURL({ message: WA_MESSAGES.hero, source: "mobile-bottom-cta" });
+  const waHref = buildWhatsAppURL({ message: WA_MESSAGES.hero, source: "mobile-bottom-cta" });
 
   useEffect(() => {
-    if (isHidden) return;
-
     const threshold = window.innerHeight * 0.8;
     const onScroll  = () => setVisible(window.scrollY > threshold);
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [isHidden]);
-
-  if (isHidden) return null;
+  }, []);
 
   return (
     // Render only on mobile — hidden via CSS on md+ screens
@@ -45,13 +37,13 @@ export function MobileBottomCTA() {
             aria-label="Quick actions"
           >
             <div className="flex w-full">
-              {/* Primary: Book Trial */}
+              {/* Primary: Join Now */}
               <Link
-                href="/free-trial"
-                onClick={() => trackEvent(GA_EVENTS.ctaClick, { cta_text: "Book Trial", cta_location: "mobile-bottom-bar", destination: "/free-trial" })}
+                href="/contact"
+                onClick={() => trackEvent(GA_EVENTS.ctaClick, { cta_text: "Join Now", cta_location: "mobile-bottom-bar", destination: "/contact" })}
                 className="flex-1 flex items-center justify-center bg-accent hover:bg-accent-hover text-white font-body font-semibold text-sm tracking-wider h-16 transition-colors"
               >
-                BOOK FREE TRIAL
+                JOIN NOW
               </Link>
 
               {/* Divider */}

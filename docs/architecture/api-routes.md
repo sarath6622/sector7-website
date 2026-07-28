@@ -37,34 +37,6 @@
 
 ---
 
-## POST `/api/trial`
-
-**File**: `src/app/api/trial/route.ts`
-
-**Purpose**: Handle free trial booking form submissions.
-
-**Request body** (validated with Zod):
-```typescript
-{
-  name: string;           // required
-  phone: string;          // required, Indian format
-  email: string;          // required for trial (confirmation)
-  preferredDate: string;  // required, ISO date string, must be >= tomorrow
-  preferredTime: 'Morning (6AM–10AM)' | 'Afternoon (12PM–4PM)' | 'Evening (5PM–9PM)';
-  fitnessGoal: 'Weight Loss' | 'Muscle Gain' | 'General Fitness' | 'Strength' | 'Other';
-  referralSource: 'Google' | 'Instagram' | 'Friend/Family' | 'Walk-in' | 'Other';
-  honeypot?: string;      // must be empty
-}
-```
-
-**Response**: Same pattern as `/api/contact`
-
-**Side effects**:
-- Sends notification email to gym staff with booking details
-- Sends confirmation email to user with trial details + WhatsApp link
-
----
-
 ## POST `/api/newsletter`
 
 **File**: `src/app/api/newsletter/route.ts`

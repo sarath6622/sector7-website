@@ -29,10 +29,9 @@ Both components are pure server components (no `"use client"` needed — `next/s
 
 ### Navbar ✅
 - Sticky, scroll-aware (adds backdrop blur on scroll)
-- Desktop: horizontal link list + CTA button ("Book Trial")
+- Desktop: horizontal link list + CTA button ("JOIN NOW" → `/contact`)
 - Mobile: hamburger icon → full-screen overlay menu
-- Links: Home, Facilities, Trainers, Transformations, About, Blog, Pricing, Contact
-- Reduces to logo-only on `/free-trial` page
+- Links: Facilities, Trainers, Transformations, About, Blog, Contact
 
 ### Footer ✅
 - 3-column layout (desktop), stacked (mobile)
@@ -56,7 +55,7 @@ Both components are pure server components (no `"use client"` needed — `next/s
 - Mobile only (`< 768px`)
 - Fixed bottom bar, 64px height
 - Appears after scrolling past hero section
-- Two buttons: "Book Trial" (primary) + WhatsApp icon (secondary)
+- Two buttons: "JOIN NOW" → `/contact` (primary) + WhatsApp icon (secondary)
 - `z-50`, backdrop blur
 
 ### PageTransition ✅
@@ -94,7 +93,7 @@ type ButtonSize    = 'sm' | 'md' | 'lg';
 - `ghost`: transparent + orange border, orange-fill on hover
 - `whatsapp`: green (`#25D366`) background
 - External links: add `external` prop → `target="_blank" rel="noopener noreferrer"`
-- **Usage**: `<Button variant="primary" href="/free-trial">Book Free Trial</Button>`
+- **Usage**: `<Button variant="primary" href="/contact">Join Now</Button>`
 
 ### SectionHeading ✅
 **Props**:
@@ -285,12 +284,6 @@ interface FAQAccordionProps { items: FAQItem[]; }
 - Framer Motion `AnimatePresence` + `animate={{ height }}` transition
 - `aria-expanded`, `aria-controls` accessible
 - Plus/minus icon toggle
-
-### FreeTrialForm ✅ (`src/components/forms/FreeTrialForm.tsx`)
-- Client Component, RHF + Zod
-- Fields: name*, phone*, email*, preferredDate* (min: today), timeSlot* (enum), goal* (enum), referral, honeypot `_hp`
-- Simulated 800ms network + success screen (Phase 9: wire to `/api/trial`)
-- Accessible error messages below each field
 
 ### ContactForm ✅ (`src/components/forms/ContactForm.tsx`)
 - Client Component, RHF + Zod

@@ -24,8 +24,6 @@ export function trackEvent(
 export const GA_EVENTS = {
   whatsappClick:        "whatsapp_click",
   ctaClick:             "cta_click",
-  trialFormStart:       "trial_form_start",
-  trialFormSubmit:      "trial_form_submit",
   contactFormSubmit:    "contact_form_submit",
   newsletterSignup:     "newsletter_signup",
   blogRead:             "blog_read",

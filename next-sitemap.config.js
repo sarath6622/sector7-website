@@ -16,8 +16,7 @@ module.exports = {
     { loc: "/trainers",       priority: 0.8, changefreq: "weekly"  },
     { loc: "/transformations",priority: 0.8, changefreq: "weekly"  },
     { loc: "/about",          priority: 0.6, changefreq: "monthly" },
-    { loc: "/contact",        priority: 0.7, changefreq: "monthly" },
-    { loc: "/free-trial",     priority: 0.9, changefreq: "monthly" },
+    { loc: "/contact",        priority: 0.9, changefreq: "monthly" },
     { loc: "/blog",           priority: 0.8, changefreq: "daily"   },
   ],
 };

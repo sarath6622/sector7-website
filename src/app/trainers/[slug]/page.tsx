@@ -232,8 +232,8 @@ export default async function TrainerProfilePage({ params }: Props) {
 
               {/* CTAs */}
               <div className="flex flex-wrap gap-3 pt-2">
-                <Button variant="primary" href="/free-trial">
-                  Book a Session
+                <Button variant="primary" href="/contact">
+                  Enquire Now
                 </Button>
                 <Button
                   variant="whatsapp"
