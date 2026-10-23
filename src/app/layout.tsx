@@ -6,6 +6,7 @@ import { GoogleAnalytics, MicrosoftClarity } from "@/components/layout/Analytics
 import { sanityClient, isSanityConfigured } from "@/lib/sanity/client";
 import { SITE_SETTINGS_RATING_QUERY } from "@/lib/sanity/queries";
 import { generateJSONLD, getLocalBusinessJSONLD } from "@/lib/seo";
+import { Analytics } from "@vercel/analytics/next";
 
 const bebasNeue = Bebas_Neue({
   weight: "400",
@@ -95,6 +96,7 @@ export default async function RootLayout({
         {/* Analytics — load after interactive, no-op if env vars not set */}
         <GoogleAnalytics />
         <MicrosoftClarity />
+        <Analytics />
       </body>
     </html>
   );
