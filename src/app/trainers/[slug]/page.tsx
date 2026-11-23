@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { ArrowLeft, CheckCircle2, Award, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
@@ -165,7 +165,7 @@ export default async function TrainerProfilePage({ params }: Props) {
               style={{ aspectRatio: "4/5", background: photoUrl ? undefined : gradient }}
             >
               {photoUrl && (
-                <Image
+                <SanityImage
                   src={photoUrl}
                   alt={name}
                   fill
@@ -319,7 +319,7 @@ export default async function TrainerProfilePage({ params }: Props) {
                             style={{ aspectRatio: "3/4", background: gradient }}
                           >
                             {imgUrl && (
-                              <Image
+                              <SanityImage
                                 src={imgUrl}
                                 alt={`${t.clientName} ${label.toLowerCase()}`}
                                 fill

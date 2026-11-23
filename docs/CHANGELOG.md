@@ -4,6 +4,30 @@
 
 ---
 
+## [2026-11-23] — /trainers loading speed
+
+Diagnosed slow-appearing cards on /trainers (reported in Safari). HTML is served from Vercel's cache in
+~0.2–0.6 s; the delay was client-side.
+
+### Fixed
+- **Stagger grew with list length.** Cards used `delay={i * 0.06}`, so with 17 coaches the last cards waited
+  ~1 s *after* scrolling into view before fading in. Now `(i % 3) * 0.06` (per grid column). Homepage preview
+  uses `(i % 4) * 0.07`.
+- **Double image processing.** Sanity photos went Sanity CDN → Vercel `/_next/image` → browser. Cold Vercel
+  cache misses took 0.4 s up to a 28 s timeout (all photos were new today). The source was also capped at
+  480 px wide, so retina screens got an upscaled image.
+
+### Added
+- `src/components/ui/SanityImage.tsx` — `next/image` wrapper with a loader that requests each srcset width
+  directly from Sanity's CDN (`w`/`h` rescaled to keep the crop, `auto=format` → WebP/AVIF). Measured
+  cold ~0.7–1.1 s, warm ~0.2–0.3 s. Used on /trainers, /trainers/[slug] and the homepage TrainersPreview.
+- /trainers: first row of photos is `loading="eager"` + `fetchPriority="high"`.
+
+### Verified
+- `tsc --noEmit`, eslint and `npm run build` pass. Loader URLs tested against Sanity CDN at 384/640/1080/1920 w.
+
+---
+
 ## [2026-11-23] — Coach profiles import from "S7 Coaches.xlsx"
 
 ### Added

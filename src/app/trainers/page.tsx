@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import Link from "next/link";
 import { PageHero } from "@/components/ui/PageHero";
 import { CTABanner } from "@/components/home/CTABanner";
@@ -74,18 +74,20 @@ export default async function TrainersPage() {
                   ? urlFor(trainer.photo).width(480).height(640).url()
                   : null;
                 return (
-                  <ScrollReveal key={trainer._id} delay={i * 0.06}>
+                  <ScrollReveal key={trainer._id} delay={(i % 3) * 0.06}>
                     <Link
                       href={`/trainers/${trainer.slug}`}
                       className="card-dark block group overflow-hidden"
                     >
                       <div className="relative" style={{ aspectRatio: "3/4" }}>
                         {photoUrl ? (
-                          <Image
+                          <SanityImage
                             src={photoUrl}
                             alt={trainer.name}
                             fill
                             className="object-cover"
+                            loading={i < 3 ? "eager" : "lazy"}
+                            fetchPriority={i < 3 ? "high" : "auto"}
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           />
                         ) : (

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
@@ -54,7 +54,7 @@ export function TrainersPreview({ trainers }: Props) {
               : null;
 
             return (
-              <ScrollReveal key={trainer._id} delay={i * 0.07}>
+              <ScrollReveal key={trainer._id} delay={(i % 4) * 0.07}>
                 <Link
                   href={`/trainers/${trainer.slug}`}
                   className="card-dark block group overflow-hidden"
@@ -69,7 +69,7 @@ export function TrainersPreview({ trainers }: Props) {
                     }}
                   >
                     {photoUrl ? (
-                      <Image
+                      <SanityImage
                         src={photoUrl}
                         alt={trainer.name}
                         fill
