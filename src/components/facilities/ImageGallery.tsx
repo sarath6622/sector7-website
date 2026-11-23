@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
-import Image from "next/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { X, ChevronLeft, ChevronRight, Expand } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -117,7 +117,7 @@ export function ImageGallery({
         tabIndex={0}
         onKeyDown={(e) => e.key === "Enter" && openLightbox(0)}
       >
-        <Image
+        <SanityImage
           src={images[0].url}
           alt={images[0].alt}
           fill
@@ -159,7 +159,7 @@ export function ImageGallery({
         tabIndex={0}
         onKeyDown={(e) => e.key === "Enter" && openLightbox(activeIndex)}
       >
-        <Image
+        <SanityImage
           key={images[activeIndex].url}
           src={images[activeIndex].url}
           alt={images[activeIndex].alt}
@@ -198,7 +198,7 @@ export function ImageGallery({
             aria-label={`View photo ${i + 1} of ${images.length}`}
             aria-pressed={i === activeIndex}
           >
-            <Image
+            <SanityImage
               src={img.url}
               alt={img.alt}
               fill
@@ -272,7 +272,7 @@ function Lightbox({ images, index, onClose, onPrev, onNext, onTouchStart, onTouc
           style={{ width: "min(90vw, 900px)", height: "min(85vh, 675px)" }}
           onClick={(e) => e.stopPropagation()}
         >
-          <Image
+          <SanityImage
             src={images[index].url}
             alt={images[index].alt}
             fill

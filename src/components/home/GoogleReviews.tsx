@@ -144,7 +144,7 @@ export async function GoogleReviews() {
         {/* Review cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {reviews.map((review, i) => (
-            <ScrollReveal key={review.name} delay={i * 0.08}>
+            <ScrollReveal key={review.name} delay={(i % 3) * 0.08}>
               <article className="card-dark p-6 flex flex-col gap-4 h-full">
                 <div className="flex items-center justify-between">
                   <StarRow count={review.rating} />

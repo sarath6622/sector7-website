@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -185,7 +185,7 @@ export default async function BlogPostPage({ params }: Props) {
             <div className="flex items-center gap-4 pt-2">
               <div className="flex items-center gap-2">
                 {authorPhotoUrl ? (
-                  <Image src={authorPhotoUrl} alt={authorName} width={32} height={32} className="rounded-full object-cover border border-border" />
+                  <SanityImage src={authorPhotoUrl} alt={authorName} width={32} height={32} className="rounded-full object-cover border border-border" />
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center font-display text-sm text-accent">
                     {authorName[0]}
@@ -212,7 +212,7 @@ export default async function BlogPostPage({ params }: Props) {
 
       {/* Hero image */}
       <div className="w-full relative overflow-hidden" style={{ height: "320px", background: heroGradient }} aria-hidden={!heroImageUrl}>
-        {heroImageUrl && <Image src={heroImageUrl} alt={title} fill className="object-cover" priority sizes="100vw" />}
+        {heroImageUrl && <SanityImage src={heroImageUrl} alt={title} fill className="object-cover" priority sizes="100vw" />}
       </div>
 
       {/* Article body */}
@@ -252,7 +252,7 @@ export default async function BlogPostPage({ params }: Props) {
             <div className="card-dark p-6 flex gap-5">
               <div className="w-20 h-20 rounded-full flex-shrink-0 border border-border overflow-hidden relative">
                 {authorPhotoUrl ? (
-                  <Image src={authorPhotoUrl} alt={authorName} fill className="object-cover" sizes="80px" />
+                  <SanityImage src={authorPhotoUrl} alt={authorName} fill className="object-cover" sizes="80px" />
                 ) : (
                   <div className="w-full h-full" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(255,85,0,0.25) 0%, rgba(20,20,20,0.95) 65%)" }} />
                 )}
@@ -284,7 +284,7 @@ export default async function BlogPostPage({ params }: Props) {
                 return (
                   <Link key={p._id} href={`/blog/${p.slug}`} className="card-dark overflow-hidden group flex gap-4 p-5">
                     <div className="w-20 h-20 flex-shrink-0 rounded relative overflow-hidden" style={{ background: relGrad }}>
-                      {relImg && <Image src={relImg} alt={p.title} fill className="object-cover" sizes="80px" />}
+                      {relImg && <SanityImage src={relImg} alt={p.title} fill className="object-cover" sizes="80px" />}
                     </div>
                     <div className="flex flex-col gap-1">
                       <span className="font-body text-[10px] text-accent tracking-wider uppercase">{p.category}</span>

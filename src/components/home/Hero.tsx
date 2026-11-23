@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -143,7 +143,7 @@ export function Hero({ heroImageUrl }: { heroImageUrl?: string | null }) {
         >
           {heroImageUrl ? (
             <>
-              <Image
+              <SanityImage
                 src={heroImageUrl}
                 alt="Sector 7 gym floor"
                 fill

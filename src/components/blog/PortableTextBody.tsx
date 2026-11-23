@@ -1,5 +1,5 @@
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import Image from "next/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { urlFor } from "@/lib/sanity/client";
 import type { PortableTextBlock } from "@portabletext/types";
 
@@ -62,7 +62,7 @@ const components: PortableTextComponents = {
       return (
         <figure className="my-6">
           <div className="relative w-full overflow-hidden rounded-sm border border-border" style={{ aspectRatio: "16/9" }}>
-            <Image src={imgUrl} alt={value.alt || ""} fill className="object-cover" sizes="(max-width: 768px) 100vw, 672px" />
+            <SanityImage src={imgUrl} alt={value.alt || ""} fill className="object-cover" sizes="(max-width: 768px) 100vw, 672px" />
           </div>
           {value.caption && (
             <figcaption className="font-body text-xs text-muted mt-2 text-center">{value.caption}</figcaption>

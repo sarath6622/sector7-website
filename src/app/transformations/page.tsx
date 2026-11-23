@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { PageHero } from "@/components/ui/PageHero";
 import { CTABanner } from "@/components/home/CTABanner";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
@@ -130,7 +130,7 @@ export default async function TransformationsPage() {
                     : "—");
 
                 return (
-                  <ScrollReveal key={t._id} delay={i * 0.05}>
+                  <ScrollReveal key={t._id} delay={(i % 4) * 0.05}>
                     <article className="card-dark overflow-hidden flex flex-col h-full">
                       {/* Before/After slider — or single photo — or gradient placeholder */}
                       <div
@@ -144,7 +144,7 @@ export default async function TransformationsPage() {
                             name={t.clientName}
                           />
                         ) : afterUrl ? (
-                          <Image
+                          <SanityImage
                             src={afterUrl}
                             alt={`${t.clientName} — after`}
                             fill
@@ -152,7 +152,7 @@ export default async function TransformationsPage() {
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           />
                         ) : beforeUrl ? (
-                          <Image
+                          <SanityImage
                             src={beforeUrl}
                             alt={`${t.clientName} — before`}
                             fill
@@ -195,7 +195,7 @@ export default async function TransformationsPage() {
               })
               : // ── Static fallback ───────────────────────────────────────────
               STATIC_TRANSFORMATIONS.map((t, i) => (
-                <ScrollReveal key={t.name} delay={i * 0.05}>
+                <ScrollReveal key={t.name} delay={(i % 4) * 0.05}>
                   <article className="card-dark overflow-hidden flex flex-col h-full">
                     <div
                       className={`bg-gradient-to-b ${t.gradient} relative flex flex-col items-center justify-center`}

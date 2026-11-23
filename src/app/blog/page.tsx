@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { PageHero } from "@/components/ui/PageHero";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { formatDate } from "@/lib/utils";
@@ -139,7 +139,7 @@ export default async function BlogPage() {
                 style={{ minHeight: "300px", background: featured.imageUrl ? undefined : DEFAULT_GRADIENT }}
               >
                 {featured.imageUrl && (
-                  <Image
+                  <SanityImage
                     src={featured.imageUrl}
                     alt={featured.title}
                     fill
@@ -175,7 +175,7 @@ export default async function BlogPage() {
           {rest.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {rest.map((post, i) => (
-                <ScrollReveal key={post.key} delay={i * 0.08}>
+                <ScrollReveal key={post.key} delay={(i % 2) * 0.08}>
                   <Link
                     href={`/blog/${post.slug}`}
                     className="card-dark overflow-hidden group flex flex-col h-full"
@@ -188,7 +188,7 @@ export default async function BlogPage() {
                       }}
                     >
                       {post.imageUrl && (
-                        <Image
+                        <SanityImage
                           src={post.imageUrl}
                           alt={post.title}
                           fill

@@ -4,6 +4,27 @@
 
 ---
 
+## [2026-11-23] — Site-wide image + reveal speed-up
+
+Extends the /trainers fix to every page that shows photos.
+
+### Changed
+- `SanityImage` now used everywhere `next/image` was (except `Logo`): Hero, FacilitiesPreview,
+  TransformationPreview, ImageGallery (facilities + lightbox), BeforeAfterSlider, /transformations,
+  /blog, /blog/[slug], PortableTextBody. Sanity photos load straight from Sanity's CDN.
+- `SanityImage` loader: non-Sanity `src` (local `/public` fallbacks) falls back to `/_next/image`.
+- Reveal stagger is per grid column instead of per list index: /transformations (`i % 4`), /blog (`i % 2`),
+  /about values (`i % 2`), GoogleReviews (`i % 3`), FacilitiesPreview (`i % 3`). /about timeline (a vertical
+  list that reveals item by item on scroll) has no delay now.
+
+### Verified
+- `tsc --noEmit` and `npm run build` pass. eslint shows the same 12 pre-existing problems as before this change.
+- Local production build against the live dataset: 60/60 image URLs on /, /facilities, /transformations,
+  /trainers, /trainers/[slug], /blog, /about come straight from cdn.sanity.io (WebP/AVIF), 200 OK,
+  avg 0.81 s / max 1.04 s cold. Local `/public` fallbacks also load (build without Sanity env).
+
+---
+
 ## [2026-11-23] — /trainers loading speed
 
 Diagnosed slow-appearing cards on /trainers (reported in Safari). HTML is served from Vercel's cache in

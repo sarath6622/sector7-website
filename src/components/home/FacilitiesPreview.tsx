@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
@@ -93,7 +93,7 @@ export function FacilitiesPreview({ facilityImages = [] }: FacilitiesPreviewProp
           {ZONES.map((zone, i) => (
             <ScrollReveal
               key={zone.name}
-              delay={i * 0.07}
+              delay={(i % 3) * 0.07}
               className={zone.colSpan}
             >
               <Link
@@ -104,7 +104,7 @@ export function FacilitiesPreview({ facilityImages = [] }: FacilitiesPreviewProp
                 {/* Zone image or gradient fallback */}
                 {facilityImages[i] ? (
                   <>
-                    <Image
+                    <SanityImage
                       src={facilityImages[i]!}
                       alt={zone.name}
                       fill

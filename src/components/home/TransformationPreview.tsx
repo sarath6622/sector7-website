@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -117,7 +117,7 @@ export function TransformationPreview({ items }: Props) {
                   style={{ aspectRatio: "3/4" }}
                 >
                   {t.afterImageUrl ? (
-                    <Image
+                    <SanityImage
                       src={t.afterImageUrl}
                       alt={`${t.clientName} transformation`}
                       fill

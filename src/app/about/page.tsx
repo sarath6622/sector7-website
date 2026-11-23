@@ -128,7 +128,7 @@ export default async function AboutPage() {
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {gymValues.map((v, i) => (
-              <ScrollReveal key={v.title} delay={i * 0.07}>
+              <ScrollReveal key={v.title} delay={(i % 2) * 0.07}>
                 <div className="card-dark p-7 flex flex-col gap-3 h-full">
                   <span className="font-display text-2xl tracking-wide text-accent uppercase">
                     {v.title}
@@ -152,7 +152,7 @@ export default async function AboutPage() {
           />
           <div className="flex flex-col gap-0">
             {timelineEvents.map((event, i) => (
-              <ScrollReveal key={`${event.year}-${i}`} delay={i * 0.06}>
+              <ScrollReveal key={`${event.year}-${i}`}>
                 <div className="grid grid-cols-[80px_1fr] gap-6 pb-10 relative">
                   {i < timelineEvents.length - 1 && (
                     <div

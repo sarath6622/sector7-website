@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
-import Image from "next/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 
 interface BeforeAfterSliderProps {
   beforeUrl: string;
@@ -103,7 +103,7 @@ export function BeforeAfterSlider({
       aria-label={`Before and after comparison for ${name}`}
     >
       {/* ── Before image (full, underneath) ──────────────────────────────────── */}
-      <Image
+      <SanityImage
         src={beforeUrl}
         alt={`${name} — before`}
         fill
@@ -125,7 +125,7 @@ export function BeforeAfterSlider({
         className="absolute inset-0 pointer-events-none"
         style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
       >
-        <Image
+        <SanityImage
           src={afterUrl}
           alt={`${name} — after`}
           fill
