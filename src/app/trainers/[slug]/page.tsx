@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, CheckCircle2, Award } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Award, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { buildWhatsAppURL, WA_MESSAGES } from "@/lib/whatsapp";
 import { sanityClient, urlFor, isSanityConfigured } from "@/lib/sanity/client";
@@ -67,6 +67,7 @@ interface SanityTrainerFull {
   title?: string;
   specializations?: string[];
   certifications?: string[];
+  achievements?: string[];
   experience?: number;
   bio?: string;
 }
@@ -114,6 +115,7 @@ export default async function TrainerProfilePage({ params }: Props) {
   const name = trainer.name ?? "Trainer";
   const title = trainer.title ?? "Coach";
   const experience = trainer.experience ?? 0;
+  const achievements = trainer.achievements ?? [];
   const bio = trainer.bio ?? "";
   const specializations = trainer.specializations ?? [];
   const certifications = trainer.certifications ?? [];
@@ -177,9 +179,11 @@ export default async function TrainerProfilePage({ params }: Props) {
             {/* Info */}
             <div className="flex flex-col gap-6">
               <div>
-                <span className="font-body text-xs font-semibold tracking-[0.3em] uppercase text-accent block mb-2">
-                  {experience} Years Experience
-                </span>
+                {experience > 0 && (
+                  <span className="font-body text-xs font-semibold tracking-[0.3em] uppercase text-accent block mb-2">
+                    {experience} Years Experience
+                  </span>
+                )}
                 <h1 className="font-display text-5xl md:text-6xl tracking-wide text-white uppercase leading-none mb-1">
                   {name}
                 </h1>
@@ -224,6 +228,27 @@ export default async function TrainerProfilePage({ params }: Props) {
                       >
                         <CheckCircle2 size={13} className="text-accent flex-shrink-0" />
                         {cert}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Achievements */}
+              {achievements.length > 0 && (
+                <div>
+                  <h2 className="font-body text-xs font-semibold tracking-[0.25em] uppercase text-muted mb-3 flex items-center gap-2">
+                    <Trophy size={13} className="text-muted" />
+                    Achievements
+                  </h2>
+                  <ul className="flex flex-col gap-2">
+                    {achievements.map((a) => (
+                      <li
+                        key={a}
+                        className="flex items-center gap-2 font-body text-sm text-white/70"
+                      >
+                        <CheckCircle2 size={13} className="text-accent flex-shrink-0" />
+                        {a}
                       </li>
                     ))}
                   </ul>

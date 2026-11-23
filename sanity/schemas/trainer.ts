@@ -55,10 +55,18 @@ export const trainer = defineType({
       of: [{ type: "string" }],
     }),
     defineField({
+      name: "achievements",
+      title: "Achievements",
+      type: "array",
+      of: [{ type: "string" }],
+      description: "Titles, medals, competitions — e.g. Mr. Asia",
+    }),
+    defineField({
       name: "experience",
       title: "Years of Experience",
       type: "number",
-      validation: (Rule) => Rule.required().min(0).max(50),
+      description: "Leave empty if unknown — the site hides the badge",
+      validation: (Rule) => Rule.min(0).max(50),
     }),
     defineField({
       name: "bio",

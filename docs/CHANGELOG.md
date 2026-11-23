@@ -4,6 +4,31 @@
 
 ---
 
+## [2026-11-23] — Coach profiles import from "S7 Coaches.xlsx"
+
+### Added
+- `sanity/schemas/trainer.ts` — new `achievements` field (string array).
+- `src/app/trainers/[slug]/page.tsx` — Achievements list (Trophy icon) below Certifications.
+- `scripts/import-coaches.mjs` — one-off import of the 15 coaches from the sheet. Dry run by default;
+  `node --env-file=.env scripts/import-coaches.mjs --commit` writes (needs `SANITY_API_TOKEN` with write access).
+  Updates 8 existing trainers (bio/certs/specialisations/achievements replaced; blank sheet cells leave fields alone;
+  name, slug, photo, experience and order untouched) and creates 7 new ones (`trainer-<slug>` ids, title "Coach",
+  no photo/experience). Idempotent. Uploads 11 photos from `coaches-images-optimized/` (resized to max 1600×2400,
+  mozjpeg q88; 128.9 MB → 5.4 MB) with alt text, replacing existing profile photos. Anjana, Jaseer, Saifu, Aswin have none yet.
+
+### Changed
+- `trainer.experience` is no longer required. The "X yrs" badge (listing, homepage preview) and the
+  "X Years Experience" label (profile) are hidden when it is empty.
+
+### Fixed
+- `ALL_TRAINERS_QUERY` / `TRAINER_BY_SLUG_QUERY` read `yearsExperience`, but the schema field is `experience`, so
+  every card showed " yrs" with no number. Now `coalesce(experience, yearsExperience)`.
+
+### Verified
+- `tsc --noEmit`, eslint and `npm run build` pass. Import committed to production (transaction K6qoRX1Be6cgGU0JDBxrxF, 15 mutations, 11 photos); read-back shows 17 active trainers.
+
+---
+
 ## [2026-07-04] — AI/GEO SEO: FAQPage + aggregateRating
 
 Added the two highest-value structured-data signals for AI answer engines

@@ -49,7 +49,8 @@ export const ALL_TRAINERS_QUERY = `
     title,
     specializations,
     certifications,
-    "experience": yearsExperience,
+    achievements,
+    "experience": coalesce(experience, yearsExperience),
     bio,
     order
   }
@@ -64,7 +65,8 @@ export const TRAINER_BY_SLUG_QUERY = `
     title,
     specializations,
     certifications,
-    "experience": yearsExperience,
+    achievements,
+    "experience": coalesce(experience, yearsExperience),
     bio,
     fullBio,
     instagramUrl,

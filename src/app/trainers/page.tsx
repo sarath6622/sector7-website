@@ -30,7 +30,7 @@ export interface SanityTrainer {
   title: string;
   specializations: string[];
   certifications: string[];
-  experience: number;
+  experience?: number;
   bio: string;
   order?: number;
 }
@@ -97,9 +97,11 @@ export default async function TrainersPage() {
                             }}
                           />
                         )}
-                        <span className="absolute top-4 right-4 font-body text-xs text-white/40 tracking-wider z-10">
-                          {trainer.experience} yrs
-                        </span>
+                        {trainer.experience ? (
+                          <span className="absolute top-4 right-4 font-body text-xs text-white/40 tracking-wider z-10">
+                            {trainer.experience} yrs
+                          </span>
+                        ) : null}
                         <div
                           aria-hidden="true"
                           className="absolute inset-0 bg-accent/0 group-hover:bg-accent/6 transition-colors duration-300 z-10"

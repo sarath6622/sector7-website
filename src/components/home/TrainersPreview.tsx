@@ -12,7 +12,7 @@ export interface TrainerPreviewItem {
   slug: string;
   title: string;
   specializations: string[];
-  experience: number;
+  experience?: number;
   photo?: { asset?: { _ref: string } };
 }
 
@@ -77,9 +77,11 @@ export function TrainersPreview({ trainers }: Props) {
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 25vw"
                       />
                     ) : null}
-                    <span className="absolute top-4 right-4 font-body text-xs text-white/40 tracking-wider z-10">
-                      {trainer.experience} yrs
-                    </span>
+                    {trainer.experience ? (
+                      <span className="absolute top-4 right-4 font-body text-xs text-white/40 tracking-wider z-10">
+                        {trainer.experience} yrs
+                      </span>
+                    ) : null}
                     <div
                       aria-hidden="true"
                       className="absolute inset-0 bg-accent/0 group-hover:bg-accent/6 transition-colors duration-300 z-10"

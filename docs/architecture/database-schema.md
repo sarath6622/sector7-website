@@ -19,6 +19,7 @@
     { name: 'photo',           type: 'image',     options: { hotspot: true } },
     { name: 'specializations', type: 'array',     of: [{ type: 'string' }] },
     { name: 'certifications',  type: 'array',     of: [{ type: 'string' }] },
+    { name: 'achievements',    type: 'array',     of: [{ type: 'string' }] },  // titles, medals (added 2026-11-23)
     { name: 'yearsExperience', type: 'number' },
     { name: 'philosophy',      type: 'text' },
     { name: 'bio',             type: 'blockContent' },   // Rich text (Portable Text)
