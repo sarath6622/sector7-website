@@ -26,9 +26,10 @@ Extends the /trainers fix to every page that shows photos.
 ### Sanity media (content, not code)
 - Facility photos replaced with compressed copies (max 1600×2400, mozjpeg q88): Cardio Zone 5.7 MB → 636 KB,
   Crossfit Zone 4.7 MB → 516 KB, Strength Training PNG 582 KB → 91 KB JPEG (no transparency was used).
-  Alt text unchanged. The two old originals remain in the media library, now unused.
-- Deleted 13 unused image assets (21.3 MB, incl. an 18 MB `sumayya.jpg`), after checking that no published
-  or draft document referenced them. Library: 36 assets / 38.9 MB → 26 / 18.8 MB.
+  Alt text unchanged.
+- Deleted 13 unused image assets (21.3 MB, incl. an 18 MB `sumayya.jpg`), then the 3 replaced facility
+  originals (cardio 5.7 MB, crossfit 4.7 MB, strength-training PNG 0.6 MB), each after checking that no
+  published or draft document referenced them. Library: 36 assets / 38.9 MB → 23 / 7.9 MB, none unused.
 
 ---
 
