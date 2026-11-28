@@ -32,6 +32,7 @@ const PHYSIQUE = ["Physique Coaching", "Professional Bodybuilding", "Hypertrophy
 const COACHES = [
   {
     name: "Anjana",
+    photo: "Anjana.jpg",
     slug: "anjana",
     certifications: ["REPS Level 4", "K11 Diploma in Personal Training", "NSQF Level 4 Certificate"],
     achievements: ["All India University Netball Player"],
@@ -40,7 +41,6 @@ const COACHES = [
   },
   {
     name: "Nirosha",
-    photo: "Nirosha.jpg",
     slug: "nirosha",
     certifications: ["Diploma in Personal Training (K11, NSQF Level 4, REPS)"],
     specializations: ["Powerlifting", "Weightlifting"],
@@ -71,12 +71,14 @@ const COACHES = [
   },
   {
     name: "Jaseer",
+    photo: "Jaseer.jpg",
     slug: "jaseer",
     specializations: PHYSIQUE,
     bio: "Jaseer specialises in physique coaching, professional bodybuilding and hypertrophy. He helps members build muscle and shape their physique with structured, focused training.",
   },
   {
     name: "Saifu",
+    photo: "Saifu.jpg",
     slug: "saifu",
     certifications: ["Level 3 Personal Trainer", "Level 4 Fitness Trainer"],
     achievements: ["All India Inter-University Gold Medalist", "Reliance National Silver Medalist"],
@@ -110,6 +112,7 @@ const COACHES = [
   },
   {
     name: "Aswin",
+    photo: "Aswin.jpg",
     slug: "aswin",
     specializations: ["Functional Fitness", "Weight Management", "Strength & Conditioning"],
     bio: "Aswin specialises in functional fitness, weight management and strength conditioning, helping members move better, get stronger and manage their weight.",

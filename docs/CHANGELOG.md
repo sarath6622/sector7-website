@@ -4,6 +4,26 @@
 
 ---
 
+## [2026-11-28] — Coach photo correction
+
+### Fixed
+- The photo supplied as `Nirosha.jpg` is actually Anjana. In Sanity, moved it from `trainer-nirosha` to
+  `trainer-anjana` (alt text "Anjana, coach at SEC7OR Fitness"); Nirosha now has no photo.
+- `scripts/import-coaches.mjs` maps `Anjana.jpg` to Anjana and no photo to Nirosha, so a rerun can't
+  revert it. Local files renamed `Nirosha.jpg` → `Anjana.jpg` in `coaches-images/` and `coaches-images-optimized/`.
+
+### Added
+- Photos for Aswin, Jaseer and Saifu (camera originals 8.8–13.4 MB → 394–584 KB, max 1600×2400, mozjpeg q88),
+  uploaded and attached with alt text via a targeted patch (not a full import rerun, so Studio edits are kept).
+  Import script maps them too. Nirosha is now the only active coach without a photo.
+
+### Removed
+- "Shaheed Muhammed" trainer profile — a duplicate of Zayd. Deleted from Sanity together with its photo
+  (nothing referenced either). `next.config.ts` redirects `/trainers/shaheed-muhammed` → `/trainers/zayd`
+  (permanent) so indexed/sitemap links keep working. 16 active trainers now.
+
+---
+
 ## [2026-11-23] — Site-wide image + reveal speed-up
 
 Extends the /trainers fix to every page that shows photos.

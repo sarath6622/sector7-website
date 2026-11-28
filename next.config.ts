@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
     return [
       // Free trial was discontinued — preserve inbound links / search equity
       { source: "/free-trial", destination: "/contact", permanent: true },
+      // "Shaheed Muhammed" was a duplicate profile of Zayd (deleted 2026-11-28)
+      { source: "/trainers/shaheed-muhammed", destination: "/trainers/zayd", permanent: true },
     ];
   },
   async headers() {
